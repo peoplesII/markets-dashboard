@@ -6,38 +6,77 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>GAPE Crypto Commodities Ticker</title>
-
+<title>GAPE Crypto Market</title>
 
 <style>
 
-html, body {
+body {
 
 margin:0;
-padding:0;
-height:55px;
-overflow:hidden;
+padding:8px;
 background:transparent;
+font-family:Arial, Helvetica, sans-serif;
 
 }
 
 
-.tradingview-widget-container {
+.crypto-grid {
 
-height:55px;
-overflow:hidden;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:6px;
+
+}
+
+
+.crypto-item {
+
+border-bottom:1px solid rgba(120,120,120,0.25);
+padding:6px 8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:12px;
 
 }
 
 
-.tradingview-widget-container__widget {
+.name {
 
-height:55px;
+font-weight:700;
+color:#222;
 
 }
+
+
+.symbol {
+
+font-size:11px;
+color:#777;
+margin-left:5px;
+
+}
+
+
+@media(max-width:600px){
+
+.crypto-grid {
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+.crypto-item {
+
+font-size:11px;
+padding:5px;
+
+}
+
+}
+
 
 </style>
-
 
 </head>
 
@@ -45,62 +84,57 @@ height:55px;
 <body>
 
 
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
+<div class="crypto-grid">
 
 
-<script 
-type="text/javascript"
-src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
-async>
+<div class="crypto-item">
+<span class="name">Bitcoin <span class="symbol">BTC/USD</span></span>
+</div>
 
 
-{
-"symbols":[
+<div class="crypto-item">
+<span class="name">Ethereum <span class="symbol">ETH/USD</span></span>
+</div>
 
 
-{
-"proName":"BITSTAMP:BTCUSD",
-"title":"BITCOIN"
-},
+<div class="crypto-item">
+<span class="name">XRP <span class="symbol">XRP/USD</span></span>
+</div>
 
 
-{
-"proName":"BITSTAMP:ETHUSD",
-"title":"ETHEREUM"
-},
+<div class="crypto-item">
+<span class="name">Solana <span class="symbol">SOL/USD</span></span>
+</div>
 
 
-{
-"proName":"TVC:GOLD",
-"title":"GOLD"
-},
+<div class="crypto-item">
+<span class="name">BNB <span class="symbol">BNB/USD</span></span>
+</div>
 
 
-{
-"proName":"TVC:USOIL",
-"title":"CRUDE OIL WTI"
-}
+<div class="crypto-item">
+<span class="name">Cardano <span class="symbol">ADA/USD</span></span>
+</div>
 
 
-],
+<div class="crypto-item">
+<span class="name">Dogecoin <span class="symbol">DOGE/USD</span></span>
+</div>
 
 
-"showSymbolLogo":false,
-
-"colorTheme":"light",
-
-"isTransparent":true,
-
-"displayMode":"adaptive",
-
-"locale":"sk"
-
-}
+<div class="crypto-item">
+<span class="name">Avalanche <span class="symbol">AVAX/USD</span></span>
+</div>
 
 
-</script>
+<div class="crypto-item">
+<span class="name">Tether <span class="symbol">USDT/USD</span></span>
+</div>
+
+
+<div class="crypto-item">
+<span class="name">USD Coin <span class="symbol">USDC/USD</span></span>
+</div>
 
 
 </div>
