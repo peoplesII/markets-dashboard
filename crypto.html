@@ -11,33 +11,137 @@
 <style>
 
 html, body {
+
 margin:0;
 padding:0;
 background:transparent;
 font-family:Arial, Helvetica, sans-serif;
-overflow:hidden;
+
+}
+
+
+.crypto-box {
+
+width:100%;
+max-width:900px;
+
+}
+
+
+.title {
+
+font-size:14px;
+font-weight:bold;
+letter-spacing:1px;
+margin-bottom:8px;
+color:#222;
+
 }
 
 
 .crypto-grid {
 
 display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:8px;
-padding:5px;
+grid-template-columns:repeat(2, 1fr);
+gap:4px 15px;
 
 }
 
 
-.crypto-card {
+.crypto-row {
 
-height:45px;
-overflow:hidden;
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:6px 4px;
+
+border-bottom:1px solid rgba(100,100,100,0.2);
+
+font-size:13px;
+
+}
+
+
+.left {
+
+display:flex;
+gap:8px;
+
+}
+
+
+.name {
+
+font-weight:bold;
+
+}
+
+
+.symbol {
+
+color:#777;
+
+}
+
+
+.price {
+
+font-weight:bold;
+text-align:right;
+
+}
+
+
+.change {
+
+width:70px;
+text-align:right;
+
+}
+
+
+.green {
+
+color:#008000;
+
+}
+
+
+.red {
+
+color:#c00000;
+
+}
+
+
+.neutral {
+
+color:#777;
+
+}
+
+
+@media(max-width:600px){
+
+.crypto-grid {
+
+grid-template-columns:1fr;
+
+}
+
+
+.crypto-row {
+
+font-size:12px;
+
+}
 
 }
 
 
 </style>
+
 
 </head>
 
@@ -45,219 +149,257 @@ overflow:hidden;
 <body>
 
 
-<div class="crypto-grid">
+<div class="crypto-box">
 
 
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
+<div class="title">
+🪙 CRYPTO MARKET
+</div>
 
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+
+<div id="crypto" class="crypto-grid">
+
+Načítavam dáta...
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+const coins = [
 
 {
-"symbol":"BITSTAMP:BTCUSD",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"bitcoin",
+name:"Bitcoin",
+symbol:"BTC/USD"
+},
 
 {
-"symbol":"BITSTAMP:ETHUSD",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"ethereum",
+name:"Ethereum",
+symbol:"ETH/USD"
+},
 
 {
-"symbol":"BITSTAMP:XRPUSD",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"ripple",
+name:"XRP",
+symbol:"XRP/USD"
+},
 
 {
-"symbol":"BINANCE:SOLUSDT",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"solana",
+name:"Solana",
+symbol:"SOL/USD"
+},
 
 {
-"symbol":"BINANCE:BNBUSDT",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"binancecoin",
+name:"BNB",
+symbol:"BNB/USD"
+},
 
 {
-"symbol":"BINANCE:ADAUSDT",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"cardano",
+name:"Cardano",
+symbol:"ADA/USD"
+},
 
 {
-"symbol":"BINANCE:DOGEUSDT",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"dogecoin",
+name:"Dogecoin",
+symbol:"DOGE/USD"
+},
 
 {
-"symbol":"BINANCE:AVAXUSDT",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"avalanche-2",
+name:"Avalanche",
+symbol:"AVAX/USD"
+},
 
 {
-"symbol":"BINANCE:LINKUSDT",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-</div>
-
-
-
-<div class="crypto-card">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+id:"chainlink",
+name:"Chainlink",
+symbol:"LINK/USD"
+},
 
 {
-"symbol":"BINANCE:DOTUSDT",
-"width":"100%",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
+id:"polkadot",
+name:"Polkadot",
+symbol:"DOT/USD"
 }
 
+];
+
+
+
+async function loadCrypto(){
+
+
+const ids = coins.map(c=>c.id).join(",");
+
+
+const url = 
+"https://api.coingecko.com/api/v3/simple/price?ids="
++ids+
+"&vs_currencies=usd&include_24hr_change=true";
+
+
+
+try{
+
+
+const response = await fetch(url);
+
+
+const data = await response.json();
+
+
+
+let html="";
+
+
+
+coins.forEach(c=>{
+
+
+let coin=data[c.id];
+
+
+if(!coin) return;
+
+
+
+let price = coin.usd;
+
+
+let change = coin.usd_24h_change;
+
+
+
+let cls="neutral";
+
+
+let arrow="";
+
+
+
+if(change>0){
+
+cls="green";
+arrow="▲";
+
+}
+
+
+if(change<0){
+
+cls="red";
+arrow="▼";
+
+}
+
+
+
+html += `
+
+
+<div class="crypto-row">
+
+
+<div class="left">
+
+<span class="name">
+${c.name}
+</span>
+
+
+<span class="symbol">
+${c.symbol}
+</span>
+
+
+</div>
+
+
+<div class="price">
+
+$${formatPrice(price)}
+
+</div>
+
+
+<div class="change ${cls}">
+
+${arrow} ${change.toFixed(2)}%
+
+</div>
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+document.getElementById("crypto").innerHTML=html;
+
+
+
+}
+
+catch(error){
+
+
+document.getElementById("crypto").innerHTML =
+"Data momentálne nedostupné";
+
+
+}
+
+
+
+}
+
+
+
+function formatPrice(value){
+
+
+if(value>=1000){
+
+return value.toLocaleString("en-US",
+{
+maximumFractionDigits:2
+});
+
+}
+
+
+return value.toFixed(4);
+
+
+}
+
+
+
+loadCrypto();
+
+
+setInterval(loadCrypto,60000);
+
+
+
 </script>
-
-</div>
-</div>
-
-
-</div>
 
 
 </body>
