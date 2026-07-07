@@ -124,16 +124,18 @@ gap:10px;
 
 border:1px solid #e5e5e5;
 border-radius:8px;
-padding:8px;
+padding:5px;
 background:#fff;
-
+height:145px;
+overflow:hidden;
 }
 
 
 .mini-card h3 {
 
-font-size:14px;
-margin:5px;
+font-size:12px;
+margin:3px;
+font-weight:600;
 
 }
 
