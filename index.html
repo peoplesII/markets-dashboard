@@ -1,150 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloomberg Dashboard</title>
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #ffffff;
-    color: #111;
-}
+<title>GAPE Markets Dashboard</title>
 
-.header {
-    padding: 18px;
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
-}
-
-.section {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    padding: 15px;
-}
-
-@media(max-width: 900px){
-    .grid { grid-template-columns: 1fr; }
-}
-
-.card {
-    border: 1px solid #e6e6e6;
-    border-radius: 10px;
-    padding: 10px;
-    background: #fff;
-}
-
-.title {
-    font-weight: bold;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #222;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 
 </head>
 
+
 <body>
 
-<div class="header">
-📊 GLOBAL MARKETS DASHBOARD
+
+<header class="header">
+
+<h1>📊 GAPE MARKETS</h1>
+
+<p>
+Live prehľad globálnych finančných trhov
+</p>
+
+</header>
+
+
+
+<section class="ticker">
+
+<div class="widget-title">
+LIVE MARKET TICKER
 </div>
 
-<!-- INDICES -->
-<div class="section">📈 Indices</div>
-<div class="grid">
+
+<!-- TradingView ticker príde sem -->
+
+
+</section>
+
+
+
+
+<section class="dashboard">
+
 
 <div class="card">
-<div class="title">S&P 500</div>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=SP:SPX&theme=light"
-width="100%" height="300" frameborder="0"></iframe>
+
+<h2>📈 Globálne indexy</h2>
+
+<div id="indices">
+
+<!-- S&P500 Nasdaq Dow DAX -->
+
 </div>
+
+</div>
+
+
+
 
 <div class="card">
-<div class="title">NASDAQ 100</div>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ:NDX&theme=light"
-width="100%" height="300" frameborder="0"></iframe>
+
+<h2>🪙 Kryptomeny</h2>
+
+<div id="crypto">
+
+<!-- BTC ETH -->
+
 </div>
+
+</div>
+
+
+
 
 <div class="card">
-<div class="title">Dow Jones</div>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=DJ:DJI&theme=light"
-width="100%" height="300" frameborder="0"></iframe>
+
+<h2>🟡 Komodity</h2>
+
+<div id="commodities">
+
+<!-- Gold Oil -->
+
 </div>
+
+</div>
+
+
+
 
 <div class="card">
-<div class="title">DAX (Germany)</div>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=XETR:DAX&theme=light"
-width="100%" height="300" frameborder="0"></iframe>
-</div>
 
-</div>
+<h2>📅 Ekonomický kalendár</h2>
 
-<!-- CRYPTO -->
-<div class="section">🪙 Crypto</div>
-<div class="grid">
+<div id="calendar">
 
-<div class="card">
-<div class="title">Bitcoin</div>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=BTCUSD&theme=light"
-width="100%" height="300"></iframe>
-</div>
+<!-- Economic calendar -->
 
-<div class="card">
-<div class="title">Ethereum</div>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=ETHUSD&theme=light"
-width="100%" height="300"></iframe>
 </div>
 
 </div>
 
-<!-- COMMODITIES -->
-<div class="section">🟡 Commodities</div>
-<div class="grid">
 
-<div class="card">
-<div class="title">Gold</div>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=XAUUSD&theme=light"
-width="100%" height="300"></iframe>
-</div>
+</section>
 
-<div class="card">
-<div class="title">Oil (WTI)</div>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=USOIL&theme=light"
-width="100%" height="300"></iframe>
-</div>
 
-</div>
 
-<!-- SENTIMENT -->
-<div class="section">🔥 Market Sentiment</div>
-<div class="grid">
+<footer>
 
-<div class="card">
-<div class="title">Fear & Greed Index</div>
-<iframe src="https://edition.cnn.com/markets/fear-and-greed"
-width="100%" height="300"></iframe>
-</div>
+GAPE Markets © 2026 | Financial News & Market Intelligence
 
-<div class="card">
-<div class="title">Market Overview</div>
-<iframe src="https://www.tradingview.com/markets/"
-width="100%" height="300"></iframe>
-</div>
+</footer>
 
-</div>
+
+
+<script src="script.js"></script>
+
 
 </body>
+
 </html>
