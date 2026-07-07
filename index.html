@@ -35,7 +35,52 @@ LIVE MARKET TICKER
 </div>
 
 
-<!-- TradingView ticker príde sem -->
+<div class="tradingview-widget-container">
+
+<div class="tradingview-widget-container__widget"></div>
+
+<script 
+type="text/javascript" 
+src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" 
+async>
+
+{
+"symbols": [
+{
+"proName": "FOREXCOM:SPXUSD",
+"title": "S&P 500"
+},
+{
+"proName": "NASDAQ:NDX",
+"title": "NASDAQ 100"
+},
+{
+"proName": "DJ:DJI",
+"title": "Dow Jones"
+},
+{
+"proName": "XETR:DAX",
+"title": "DAX"
+},
+{
+"proName": "BITSTAMP:BTCUSD",
+"title": "Bitcoin"
+},
+{
+"proName": "TVC:GOLD",
+"title": "Gold"
+}
+],
+"showSymbolLogo": true,
+"colorTheme": "light",
+"isTransparent": false,
+"displayMode": "adaptive",
+"locale": "en"
+}
+
+</script>
+
+</div>
 
 
 </section>
