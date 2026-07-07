@@ -10,11 +10,14 @@
 
 <style>
 
-body {
+html, body {
+
 margin:0;
-padding:5px;
+padding:0;
 background:transparent;
 font-family:Arial, Helvetica, sans-serif;
+overflow:hidden;
+
 }
 
 
@@ -22,16 +25,17 @@ font-family:Arial, Helvetica, sans-serif;
 
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:6px;
+gap:8px;
+padding:5px;
 
 }
 
 
-.card {
+.crypto-card {
 
 height:55px;
-overflow:hidden;
 border-bottom:1px solid rgba(120,120,120,0.25);
+overflow:hidden;
 
 }
 
@@ -39,11 +43,12 @@ border-bottom:1px solid rgba(120,120,120,0.25);
 @media(max-width:600px){
 
 .crypto-grid {
+
 grid-template-columns:repeat(2,1fr);
-}
 
 }
 
+}
 
 </style>
 
@@ -56,10 +61,16 @@ grid-template-columns:repeat(2,1fr);
 <div class="crypto-grid">
 
 
-<div class="card">
+<!-- Bitcoin -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
 "symbol":"BITSTAMP:BTCUSD",
 "width":"100%",
@@ -67,18 +78,28 @@ grid-template-columns:repeat(2,1fr);
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- Ethereum -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
 "symbol":"BITSTAMP:ETHUSD",
 "width":"100%",
@@ -86,18 +107,28 @@ grid-template-columns:repeat(2,1fr);
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- XRP -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
 "symbol":"BITSTAMP:XRPUSD",
 "width":"100%",
@@ -105,18 +136,28 @@ grid-template-columns:repeat(2,1fr);
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- Solana -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
 "symbol":"BINANCE:SOLUSDT",
 "width":"100%",
@@ -124,18 +165,28 @@ grid-template-columns:repeat(2,1fr);
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- BNB -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
 "symbol":"BINANCE:BNBUSDT",
 "width":"100%",
@@ -143,18 +194,28 @@ grid-template-columns:repeat(2,1fr);
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- Cardano -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
 "symbol":"BINANCE:ADAUSDT",
 "width":"100%",
@@ -162,18 +223,28 @@ grid-template-columns:repeat(2,1fr);
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- Dogecoin -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
 "symbol":"BINANCE:DOGEUSDT",
 "width":"100%",
@@ -181,18 +252,28 @@ grid-template-columns:repeat(2,1fr);
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- Avalanche -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
 "symbol":"BINANCE:AVAXUSDT",
 "width":"100%",
@@ -200,48 +281,72 @@ grid-template-columns:repeat(2,1fr);
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- Chainlink -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
-"symbol":"CRYPTO:USDTUSD",
+"symbol":"BINANCE:LINKUSDT",
 "width":"100%",
 "height":"55",
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
 
-<div class="card">
+<!-- Polkadot -->
+
+<div class="crypto-card">
+
 <div class="tradingview-widget-container">
+
 <div class="tradingview-widget-container__widget"></div>
+
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+
 {
-"symbol":"COINBASE:USDCUSD",
+"symbol":"BINANCE:DOTUSDT",
 "width":"100%",
 "height":"55",
 "dateRange":"1D",
 "colorTheme":"light",
 "isTransparent":true,
+"showSymbolLogo":false,
 "locale":"sk"
 }
+
 </script>
+
 </div>
+
 </div>
 
 
