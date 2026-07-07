@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>GAPE Global Market Index Dashboard</title>
+<title>GAPE Global Index Ticker</title>
 
 
 <style>
@@ -14,76 +14,83 @@
 body {
 
 margin:0;
-padding:8px;
-background:#ffffff;
+padding:0;
+background:white;
 font-family:Arial, Helvetica, sans-serif;
-
-}
-
-
-.grid {
-
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:10px;
-
-}
-
-
-.card {
-
-border:1px solid #e5e5e5;
-border-radius:10px;
-background:#ffffff;
-padding:8px;
-height:110px;
 overflow:hidden;
+
+}
+
+
+.ticker {
+
+height:55px;
+display:flex;
+align-items:center;
+overflow:hidden;
+white-space:nowrap;
+border-top:1px solid #eeeeee;
+border-bottom:1px solid #eeeeee;
+background:#ffffff;
+
+}
+
+
+.ticker-track {
+
+display:inline-flex;
+animation:scroll 25s linear infinite;
+
+}
+
+
+.item {
+
+font-size:13px;
+font-weight:600;
+padding:0 35px;
+color:#222;
 
 }
 
 
 .category {
 
-font-size:10px;
-font-weight:bold;
 color:#777;
-letter-spacing:0.8px;
+font-size:11px;
 text-transform:uppercase;
-margin-bottom:2px;
+letter-spacing:0.5px;
 
 }
 
 
-.title {
+.separator {
 
-font-size:14px;
-font-weight:700;
-color:#111;
-margin-bottom:4px;
+color:#bbb;
 
 }
 
 
-@media(max-width:1000px){
 
-.grid {
-
-grid-template-columns:repeat(2,1fr);
-
-}
-
-}
+@keyframes scroll {
 
 
-@media(max-width:600px){
+from {
 
-.grid {
-
-grid-template-columns:1fr;
+transform:translateX(100%);
 
 }
 
+
+to {
+
+transform:translateX(-100%);
+
 }
+
+
+}
+
 
 
 </style>
@@ -92,168 +99,73 @@ grid-template-columns:1fr;
 </head>
 
 
-
 <body>
 
 
-<div class="grid">
+<div class="ticker">
 
 
+<div class="ticker-track">
 
-<!-- S&P 500 -->
 
-<div class="card">
-
-<div class="category">
-US LARGE CAP
-</div>
-
-<div class="title">
+<div class="item">
+<span class="category">US LARGE CAP:</span>
 S&P 500
 </div>
 
 
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-
-{
-"symbol":"FOREXCOM:SPXUSD",
-"width":"100%",
-"height":"90",
-"dateRange":"3M",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-
+<div class="separator">
+|
 </div>
 
 
-
-
-<!-- Nasdaq -->
-
-<div class="card">
-
-<div class="category">
-US TECHNOLOGY
-</div>
-
-<div class="title">
+<div class="item">
+<span class="category">US TECHNOLOGY:</span>
 Nasdaq Composite
 </div>
 
 
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-
-{
-"symbol":"NASDAQ:QQQ",
-"width":"100%",
-"height":"90",
-"dateRange":"3M",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-
+<div class="separator">
+|
 </div>
 
 
-
-
-<!-- Dow Jones -->
-
-<div class="card">
-
-<div class="category">
-US BLUE CHIPS
-</div>
-
-<div class="title">
+<div class="item">
+<span class="category">US BLUE CHIPS:</span>
 Dow Jones
 </div>
 
 
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-
-{
-"symbol":"AMEX:DIA",
-"width":"100%",
-"height":"90",
-"dateRange":"3M",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
-</div>
-
+<div class="separator">
+|
 </div>
 
 
-
-
-<!-- DAX -->
-
-<div class="card">
-
-<div class="category">
-EUROPE
-</div>
-
-<div class="title">
+<div class="item">
+<span class="category">EUROPE:</span>
 DAX 40
 </div>
 
 
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-
-{
-"symbol":"XETR:DAX",
-"width":"100%",
-"height":"90",
-"dateRange":"3M",
-"colorTheme":"light",
-"isTransparent":true,
-"locale":"sk"
-}
-
-</script>
-
+<div class="separator">
+|
 </div>
 
+
+<div class="item">
+<span class="category">GLOBAL:</span>
+Market Overview
 </div>
 
+
+
+</div>
 
 
 </div>
 
 
 </body>
+
 
 </html>
