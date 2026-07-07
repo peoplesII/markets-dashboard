@@ -1,1 +1,111 @@
+<!DOCTYPE html>
+<html lang="sk">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GAPE Crypto Commodities Ticker</title>
+
+
+<style>
+
+html, body {
+
+margin:0;
+padding:0;
+height:55px;
+overflow:hidden;
+background:transparent;
+
+}
+
+
+.tradingview-widget-container {
+
+height:55px;
+overflow:hidden;
+
+}
+
+
+.tradingview-widget-container__widget {
+
+height:55px;
+
+}
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<div class="tradingview-widget-container">
+
+<div class="tradingview-widget-container__widget"></div>
+
+
+<script 
+type="text/javascript"
+src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+async>
+
+
+{
+"symbols":[
+
+
+{
+"proName":"BITSTAMP:BTCUSD",
+"title":"BITCOIN"
+},
+
+
+{
+"proName":"BITSTAMP:ETHUSD",
+"title":"ETHEREUM"
+},
+
+
+{
+"proName":"TVC:GOLD",
+"title":"GOLD"
+},
+
+
+{
+"proName":"TVC:USOIL",
+"title":"CRUDE OIL WTI"
+}
+
+
+],
+
+
+"showSymbolLogo":false,
+
+"colorTheme":"light",
+
+"isTransparent":true,
+
+"displayMode":"adaptive",
+
+"locale":"sk"
+
+}
+
+
+</script>
+
+
+</div>
+
+
+</body>
+
+</html>
