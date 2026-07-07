@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>GAPE Index Dashboard</title>
+<title>GAPE Global Market Index Dashboard</title>
 
 
 <style>
@@ -14,8 +14,8 @@
 body {
 
 margin:0;
-padding:10px;
-background:white;
+padding:8px;
+background:#ffffff;
 font-family:Arial, Helvetica, sans-serif;
 
 }
@@ -32,30 +32,41 @@ gap:10px;
 
 .card {
 
-border:1px solid #e2e2e2;
-border-radius:8px;
-background:white;
-padding:6px;
-height:210px;
+border:1px solid #e5e5e5;
+border-radius:10px;
+background:#ffffff;
+padding:8px;
+height:180px;
 overflow:hidden;
+
+}
+
+
+.category {
+
+font-size:10px;
+font-weight:bold;
+color:#777;
+letter-spacing:0.8px;
+text-transform:uppercase;
+margin-bottom:2px;
 
 }
 
 
 .title {
 
-font-size:13px;
-font-weight:bold;
-margin-bottom:5px;
-color:#222;
+font-size:14px;
+font-weight:700;
+color:#111;
+margin-bottom:4px;
 
 }
 
 
-
 @media(max-width:1000px){
 
-.grid{
+.grid {
 
 grid-template-columns:repeat(2,1fr);
 
@@ -64,10 +75,9 @@ grid-template-columns:repeat(2,1fr);
 }
 
 
-
 @media(max-width:600px){
 
-.grid{
+.grid {
 
 grid-template-columns:1fr;
 
@@ -82,13 +92,21 @@ grid-template-columns:1fr;
 </head>
 
 
+
 <body>
 
 
 <div class="grid">
 
 
+
+<!-- S&P 500 -->
+
 <div class="card">
+
+<div class="category">
+US LARGE CAP
+</div>
 
 <div class="title">
 S&P 500
@@ -99,14 +117,12 @@ S&P 500
 
 <div class="tradingview-widget-container__widget"></div>
 
-<script 
-src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
-async>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
 
 {
 "symbol":"FOREXCOM:SPXUSD",
 "width":"100%",
-"height":"170",
+"height":"145",
 "dateRange":"3M",
 "colorTheme":"light",
 "isTransparent":true,
@@ -117,17 +133,21 @@ async>
 
 </div>
 
-
 </div>
 
 
 
 
+<!-- Nasdaq -->
 
 <div class="card">
 
+<div class="category">
+US TECHNOLOGY
+</div>
+
 <div class="title">
-NASDAQ 100
+Nasdaq Composite
 </div>
 
 
@@ -135,14 +155,12 @@ NASDAQ 100
 
 <div class="tradingview-widget-container__widget"></div>
 
-<script 
-src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
-async>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
 
 {
 "symbol":"NASDAQ:IXIC",
 "width":"100%",
-"height":"170",
+"height":"145",
 "dateRange":"3M",
 "colorTheme":"light",
 "isTransparent":true,
@@ -158,10 +176,13 @@ async>
 
 
 
-
-
+<!-- Dow Jones -->
 
 <div class="card">
+
+<div class="category">
+US BLUE CHIPS
+</div>
 
 <div class="title">
 Dow Jones
@@ -172,14 +193,12 @@ Dow Jones
 
 <div class="tradingview-widget-container__widget"></div>
 
-<script 
-src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
-async>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
 
 {
-"symbol":"TVC:DJI",
+"symbol":"INDEX:DJI",
 "width":"100%",
-"height":"170",
+"height":"145",
 "dateRange":"3M",
 "colorTheme":"light",
 "isTransparent":true,
@@ -190,19 +209,21 @@ async>
 
 </div>
 
-
 </div>
 
 
 
 
-
-
+<!-- DAX -->
 
 <div class="card">
 
+<div class="category">
+EUROPE
+</div>
+
 <div class="title">
-DAX
+DAX 40
 </div>
 
 
@@ -210,14 +231,12 @@ DAX
 
 <div class="tradingview-widget-container__widget"></div>
 
-<script 
-src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
-async>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
 
 {
 "symbol":"XETR:DAX",
 "width":"100%",
-"height":"170",
+"height":"145",
 "dateRange":"3M",
 "colorTheme":"light",
 "isTransparent":true,
@@ -227,7 +246,6 @@ async>
 </script>
 
 </div>
-
 
 </div>
 
