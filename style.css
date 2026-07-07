@@ -111,3 +111,51 @@ grid-template-columns:1fr;
 }
 
 }
+.mini-grid {
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+
+}
+
+
+.mini-card {
+
+border:1px solid #e5e5e5;
+border-radius:8px;
+padding:8px;
+background:#fff;
+
+}
+
+
+.mini-card h3 {
+
+font-size:14px;
+margin:5px;
+
+}
+
+
+
+@media(max-width:1000px){
+
+.mini-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+
+@media(max-width:600px){
+
+.mini-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
