@@ -6,38 +6,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>GAPE Markets Dashboard</title>
-
-<link rel="stylesheet" href="style.css">
+<title>GAPE Live Market Ticker</title>
 
 </head>
 
 
-<body>
-
-
-<header class="header">
-
-<h1>📊 GAPE MARKETS</h1>
-
-<p>
-Live prehľad globálnych finančných trhov
-</p>
-
-</header>
-
-
-
-<section class="ticker">
-
-<div class="widget-title">
-LIVE MARKET TICKER
-</div>
+<body style="margin:0;background:white;">
 
 
 <div class="tradingview-widget-container">
 
 <div class="tradingview-widget-container__widget"></div>
+
 
 <script 
 type="text/javascript" 
@@ -46,231 +26,74 @@ async>
 
 {
 "symbols": [
+
 {
 "proName": "FOREXCOM:SPXUSD",
 "title": "S&P 500"
 },
+
 {
 "proName": "NASDAQ:NDX",
 "title": "NASDAQ 100"
 },
+
 {
 "proName": "DJ:DJI",
 "title": "Dow Jones"
 },
+
 {
 "proName": "XETR:DAX",
 "title": "DAX"
 },
+
+{
+"proName": "FTSE:UKX",
+"title": "FTSE 100"
+},
+
+{
+"proName": "TVC:GOLD",
+"title": "Gold"
+},
+
+{
+"proName": "TVC:USOIL",
+"title": "Oil"
+},
+
 {
 "proName": "BITSTAMP:BTCUSD",
 "title": "Bitcoin"
 },
+
 {
-"proName": "TVC:GOLD",
-"title": "Gold"
+"proName": "BITSTAMP:ETHUSD",
+"title": "Ethereum"
+},
+
+{
+"proName": "FX:EURUSD",
+"title": "EUR/USD"
 }
+
 ],
+
 "showSymbolLogo": true,
+
 "colorTheme": "light",
-"isTransparent": false,
+
+"isTransparent": true,
+
 "displayMode": "adaptive",
-"locale": "en"
+
+"locale": "sk"
+
 }
 
 </script>
 
 </div>
-
-
-</section>
-
-
-
-
-<section class="dashboard">
-
-
-<div class="card">
-
-<h2>📈 Globálne indexy</h2>
-
-<div id="indices" class="mini-grid">
-
-
-<div class="mini-card">
-
-<h3>S&P 500</h3>
-
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-
-{
-"symbol": "FOREXCOM:SPXUSD",
-"width": "100%",
-"height": "100",
-"locale": "en",
-"dateRange": "12M",
-"colorTheme": "light",
-"isTransparent": false
-}
-
-</script>
-
-</div>
-
-</div>
-
-
-
-<div class="mini-card">
-
-<h3>NASDAQ 100</h3>
-
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-
-{
-"symbol": "NASDAQ:NDX",
-"width": "100%",
-"height": "100",
-"locale": "en",
-"dateRange": "12M",
-"colorTheme": "light"
-}
-
-</script>
-
-</div>
-
-</div>
-
-
-
-
-<div class="mini-card">
-
-<h3>Dow Jones</h3>
-
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-
-{
-"symbol": "DJ:DJI",
-"width": "100%",
-"height": "100",
-"locale": "en",
-"dateRange": "12M",
-"colorTheme": "light"
-}
-
-</script>
-
-</div>
-
-</div>
-
-
-
-
-<div class="mini-card">
-
-<h3>DAX</h3>
-
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-
-{
-"symbol": "XETR:DAX",
-"width": "100%",
-"height": "180",
-"locale": "en",
-"dateRange": "12M",
-"colorTheme": "light"
-}
-
-</script>
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-
-
-<div class="card">
-
-<h2>🪙 Kryptomeny</h2>
-
-<div id="crypto">
-
-<!-- BTC ETH -->
-
-</div>
-
-</div>
-
-
-
-
-<div class="card">
-
-<h2>🟡 Komodity</h2>
-
-<div id="commodities">
-
-<!-- Gold Oil -->
-
-</div>
-
-</div>
-
-
-
-
-<div class="card">
-
-<h2>📅 Ekonomický kalendár</h2>
-
-<div id="calendar">
-
-<!-- Economic calendar -->
-
-</div>
-
-</div>
-
-
-</section>
-
-
-
-<footer>
-
-GAPE Markets © 2026 | Financial News & Market Intelligence
-
-</footer>
-
-
-
-<script src="script.js"></script>
 
 
 </body>
