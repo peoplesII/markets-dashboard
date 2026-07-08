@@ -124,128 +124,146 @@ html, body{
 <body>
 
 <div class="commodities-box">
+    <div class="title">COMMODITIES</div>
 
-<div class="title">
-🥇 COMMODITIES
-</div>
-
-<div id="commodities" class="commodities-grid">
-<span class="loading">Načítavam dáta...</span>
-</div>
-
+    <div id="commodities" class="commodities-grid">
+        <span class="loading">Nacitavam data...</span>
+    </div>
 </div>
 
 <script>
 const commodities = [
-    { name:"Gold", symbol:"GC", stooq:"gc.f" },
-    { name:"Silver", symbol:"SI", stooq:"si.f" },
-    { name:"Crude Oil", symbol:"WTI", stooq:"cl.f" },
-    { name:"Natural Gas", symbol:"NG", stooq:"ng.f" },
-    { name:"Copper", symbol:"HG", stooq:"hg.f" },
-    { name:"Wheat", symbol:"ZW", stooq:"zw.f" },
-    { name:"Corn", symbol:"ZC", stooq:"zc.f" },
-    { name:"Soybeans", symbol:"ZS", stooq:"zs.f" }
+    { name:"Gold", symbol:"GC", yahoo:"GC=F" },
+    { name:"Silver", symbol:"SI", yahoo:"SI=F" },
+    { name:"Crude Oil", symbol:"WTI", yahoo:"CL=F" },
+    { name:"Natural Gas", symbol:"NG", yahoo:"NG=F" },
+    { name:"Copper", symbol:"HG", yahoo:"HG=F" },
+    { name:"Wheat", symbol:"ZW", yahoo:"ZW=F" },
+    { name:"Corn", symbol:"ZC", yahoo:"ZC=F" },
+    { name:"Soybeans", symbol:"ZS", yahoo:"ZS=F" }
 ];
 
+const proxyBuilders = [
+    url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+    url => "https://corsproxy.io/?" + encodeURIComponent(url)
+];
+
+async function fetchJsonWithFallback(url){
+    let lastError = null;
+
+    for(const buildProxyUrl of proxyBuilders){
+        try{
+            const response = await fetch(buildProxyUrl(url), { cache:"no-store" });
+
+            if(!response.ok){
+                throw new Error("HTTP " + response.status);
+            }
+
+            return await response.json();
+        }
+        catch(error){
+            lastError = error;
+        }
+    }
+
+    throw lastError || new Error("No data source available");
+}
+
+async function loadCommodity(item){
+    const yahooUrl =
+        "https://query1.finance.yahoo.com/v8/finance/chart/" +
+        encodeURIComponent(item.yahoo) +
+        "?range=5d&interval=1d&_=" +
+        Date.now();
+
+    const data = await fetchJsonWithFallback(yahooUrl);
+    const result = data?.chart?.result?.[0];
+    const meta = result?.meta;
+
+    if(!meta || meta.symbol !== item.yahoo){
+        throw new Error("Invalid symbol data");
+    }
+
+    const price = Number(meta.regularMarketPrice);
+    const previousClose = Number(meta.chartPreviousClose);
+
+    if(!Number.isFinite(price)){
+        throw new Error("Invalid price");
+    }
+
+    let changePercent = 0;
+
+    if(Number.isFinite(previousClose) && previousClose !== 0){
+        changePercent = ((price - previousClose) / previousClose) * 100;
+    }
+
+    return {
+        ...item,
+        price,
+        changePercent
+    };
+}
+
 async function loadCommodities(){
-
-    const symbols = commodities.map(c => c.stooq).join(",");
-
-    const stooqUrl =
-        "https://stooq.com/q/l/?s=" +
-        symbols +
-        "&f=sd2t2ohlcv&h&e=csv";
-
-    const proxyUrl =
-        "https://api.allorigins.win/raw?url=" +
-        encodeURIComponent(stooqUrl);
+    const container = document.getElementById("commodities");
 
     try{
+        const results = await Promise.allSettled(
+            commodities.map(item => loadCommodity(item))
+        );
 
-        const response = await fetch(proxyUrl);
-        const csv = await response.text();
+        const rows = results
+            .filter(result => result.status === "fulfilled")
+            .map(result => result.value);
 
-        const rows = csv.trim().split("\n").slice(1);
+        if(rows.length === 0){
+            container.innerHTML = '<span class="loading">Data momentalne nedostupne</span>';
+            return;
+        }
 
-        let html = "";
+        container.innerHTML = rows.map(renderCommodity).join("");
+    }
+    catch(error){
+        container.innerHTML = '<span class="loading">Data momentalne nedostupne</span>';
+    }
+}
 
-        rows.forEach(row => {
+function renderCommodity(item){
+    let cls = "neutral";
+    let arrow = "";
 
-            const cols = row.split(",");
+    if(item.changePercent > 0){
+        cls = "green";
+        arrow = "▲";
+    }
 
-            const symbolRaw = cols[0];
-            const open = parseFloat(cols[3]);
-            const close = parseFloat(cols[6]);
+    if(item.changePercent < 0){
+        cls = "red";
+        arrow = "▼";
+    }
 
-            const item = commodities.find(c =>
-                c.stooq.toLowerCase() === symbolRaw.toLowerCase()
-            );
-
-            if(!item || isNaN(close)) return;
-
-            let changePercent = 0;
-
-            if(!isNaN(open) && open !== 0){
-                changePercent = ((close - open) / open) * 100;
-            }
-
-            let cls = "neutral";
-            let arrow = "";
-
-            if(changePercent > 0){
-                cls = "green";
-                arrow = "▲";
-            }
-
-            if(changePercent < 0){
-                cls = "red";
-                arrow = "▼";
-            }
-
-            html += `
-
+    return `
 <div class="commodity-row">
-
     <div class="left">
         <span class="name">${item.name}</span>
         <span class="symbol">(${item.symbol})</span>
     </div>
 
-    <div class="price">
-        ${formatPrice(close)}
-    </div>
+    <div class="price">${formatPrice(item.price)}</div>
 
     <div class="change ${cls}">
-        ${arrow} ${changePercent.toFixed(2)}%
+        ${arrow} ${item.changePercent.toFixed(2)}%
     </div>
-
-</div>
-
-`;
-
-        });
-
-        document.getElementById("commodities").innerHTML =
-            html || '<span class="loading">Data momentálne nedostupné</span>';
-
-    }
-
-    catch(error){
-
-        document.getElementById("commodities").innerHTML =
-            '<span class="loading">Data momentálne nedostupné</span>';
-
-    }
+</div>`;
 }
 
 function formatPrice(value){
-
-    if(!value || isNaN(value)){
+    if(!Number.isFinite(value)){
         return "--";
     }
 
     if(value >= 1000){
-        return "$" + value.toLocaleString("en-US",{
+        return "$" + value.toLocaleString("en-US", {
             maximumFractionDigits:2
         });
     }
@@ -254,8 +272,7 @@ function formatPrice(value){
 }
 
 loadCommodities();
-
-setInterval(loadCommodities,300000);
+setInterval(loadCommodities, 300000);
 </script>
 
 </body>
