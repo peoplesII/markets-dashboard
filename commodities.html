@@ -1,1 +1,246 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>GAPE Commodities</title>
+
+<style>
+html, body{
+    margin:0;
+    padding:0;
+    background:transparent;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#222;
+}
+
+.commodities-box{
+    width:100%;
+    max-width:900px;
+    box-sizing:border-box;
+    padding:0;
+}
+
+.title{
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.8px;
+    margin-bottom:6px;
+    line-height:1.1;
+    color:#222;
+}
+
+.commodities-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6px 10px;
+}
+
+.commodity-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:5px 4px;
+    border-bottom:1px solid rgba(100,100,100,.22);
+    font-size:11px;
+    line-height:1.15;
+}
+
+.left{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex:1;
+    min-width:0;
+}
+
+.name{
+    font-size:11px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.symbol{
+    font-size:10px;
+    color:#777;
+    white-space:nowrap;
+}
+
+.price{
+    font-size:12px;
+    font-weight:bold;
+    white-space:nowrap;
+    text-align:right;
+}
+
+.change{
+    width:62px;
+    text-align:right;
+    font-size:10.5px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.green{ color:#008000; }
+.red{ color:#c00000; }
+.neutral{ color:#777; }
+
+@media(max-width:600px){
+
+    .commodities-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .commodity-row{
+        font-size:10px;
+    }
+
+    .name{
+        font-size:10px;
+    }
+
+    .symbol{
+        font-size:9px;
+    }
+
+    .price{
+        font-size:11px;
+    }
+
+    .change{
+        width:58px;
+        font-size:9.5px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="commodities-box">
+
+<div class="title">
+🥇 COMMODITIES
+</div>
+
+<div id="commodities" class="commodities-grid">
+Načítavam dáta...
+</div>
+
+</div>
+
+<script>
+const commodities = [
+
+{
+    name:"Gold",
+    symbol:"XAU",
+    price:"2,365.40",
+    change:0.42
+},
+
+{
+    name:"Silver",
+    symbol:"XAG",
+    price:"30.82",
+    change:-0.18
+},
+
+{
+    name:"Crude Oil",
+    symbol:"WTI",
+    price:"82.15",
+    change:0.76
+},
+
+{
+    name:"Brent Oil",
+    symbol:"BRENT",
+    price:"85.64",
+    change:0.51
+},
+
+{
+    name:"Natural Gas",
+    symbol:"NG",
+    price:"2.71",
+    change:-1.24
+},
+
+{
+    name:"Copper",
+    symbol:"HG",
+    price:"4.49",
+    change:0.33
+},
+
+{
+    name:"Wheat",
+    symbol:"WHEAT",
+    price:"587.25",
+    change:-0.62
+},
+
+{
+    name:"Corn",
+    symbol:"CORN",
+    price:"421.50",
+    change:0.21
+}
+
+];
+
+function loadCommodities(){
+
+    let html="";
+
+    commodities.forEach(c=>{
+
+        let cls="neutral";
+        let arrow="";
+
+        if(c.change>0){
+            cls="green";
+            arrow="▲";
+        }
+
+        if(c.change<0){
+            cls="red";
+            arrow="▼";
+        }
+
+        html+=`
+
+<div class="commodity-row">
+
+    <div class="left">
+        <span class="name">${c.name}</span>
+        <span class="symbol">(${c.symbol})</span>
+    </div>
+
+    <div class="price">
+        ${c.price}
+    </div>
+
+    <div class="change ${cls}">
+        ${arrow} ${c.change.toFixed(2)}%
+    </div>
+
+</div>
+
+`;
+
+    });
+
+    document.getElementById("commodities").innerHTML=html;
+
+}
+
+loadCommodities();
+</script>
+
+</body>
+</html>
