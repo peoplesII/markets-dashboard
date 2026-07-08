@@ -2,7 +2,6 @@
 <html lang="sk">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -10,397 +9,310 @@
 
 <style>
 
-html, body {
-
-margin:0;
-padding:0;
-background:transparent;
-font-family:Arial, Helvetica, sans-serif;
-
+html, body{
+    margin:0;
+    padding:0;
+    background:transparent;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#222;
 }
 
-
-.crypto-box {
-
-width:100%;
-max-width:900px;
-
+.crypto-box{
+    width:100%;
+    max-width:900px;
+    box-sizing:border-box;
+    padding:0;
 }
 
-
-.title {
-
-font-size:14px;
-font-weight:bold;
-letter-spacing:1px;
-margin-bottom:8px;
-color:#222;
-
+.title{
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.8px;
+    margin-bottom:6px;
+    line-height:1.1;
+    color:#222;
 }
 
-
-.crypto-grid {
-
-display:grid;
-grid-template-columns:repeat(2, 1fr);
-gap:4px 15px;
-
+.crypto-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6px 10px;
 }
 
+.crypto-row{
 
-.crypto-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
 
-display:flex;
-justify-content:space-between;
-align-items:center;
+    padding:5px 4px;
 
-padding:6px 4px;
+    border-bottom:1px solid rgba(100,100,100,.22);
 
-border-bottom:1px solid rgba(100,100,100,0.2);
-
-font-size:13px;
-
+    font-size:11px;
+    line-height:1.15;
 }
 
-
-.left {
-
-display:flex;
-gap:8px;
-
+.left{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex:1;
+    min-width:0;
 }
 
-
-.name {
-
-font-weight:bold;
-
+.name{
+    font-size:11px;
+    font-weight:bold;
+    white-space:nowrap;
 }
 
-
-.symbol {
-
-color:#777;
-
+.symbol{
+    font-size:10px;
+    color:#777;
+    white-space:nowrap;
 }
 
-
-.price {
-
-font-weight:bold;
-text-align:right;
-
+.price{
+    font-size:12px;
+    font-weight:bold;
+    white-space:nowrap;
+    text-align:right;
 }
 
-
-.change {
-
-width:70px;
-text-align:right;
-
+.change{
+    width:62px;
+    text-align:right;
+    font-size:10.5px;
+    font-weight:bold;
+    white-space:nowrap;
 }
 
-
-.green {
-
-color:#008000;
-
+.green{
+    color:#008000;
 }
 
-
-.red {
-
-color:#c00000;
-
+.red{
+    color:#c00000;
 }
 
-
-.neutral {
-
-color:#777;
-
+.neutral{
+    color:#777;
 }
-
 
 @media(max-width:600px){
 
-.crypto-grid {
+    .crypto-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
 
-grid-template-columns:1fr;
+    .crypto-row{
+        font-size:10px;
+    }
+
+    .name{
+        font-size:10px;
+    }
+
+    .symbol{
+        font-size:9px;
+    }
+
+    .price{
+        font-size:11px;
+    }
+
+    .change{
+        width:58px;
+        font-size:9.5px;
+    }
 
 }
-
-
-.crypto-row {
-
-font-size:12px;
-
-}
-
-}
-
 
 </style>
 
-
 </head>
-
 
 <body>
 
-
 <div class="crypto-box">
-
 
 <div class="title">
 🪙 CRYPTO MARKET
 </div>
 
-
 <div id="crypto" class="crypto-grid">
-
 Načítavam dáta...
-
 </div>
 
-
 </div>
-
-
 
 <script>
 
-
-const coins = [
+const coins=[
 
 {
 id:"bitcoin",
 name:"Bitcoin",
-symbol:"BTC/USD"
+symbol:"BTC"
 },
 
 {
 id:"ethereum",
 name:"Ethereum",
-symbol:"ETH/USD"
+symbol:"ETH"
 },
 
 {
 id:"ripple",
 name:"XRP",
-symbol:"XRP/USD"
+symbol:"XRP"
 },
 
 {
 id:"solana",
 name:"Solana",
-symbol:"SOL/USD"
+symbol:"SOL"
 },
 
 {
 id:"binancecoin",
 name:"BNB",
-symbol:"BNB/USD"
+symbol:"BNB"
 },
 
 {
 id:"cardano",
 name:"Cardano",
-symbol:"ADA/USD"
+symbol:"ADA"
 },
 
 {
 id:"dogecoin",
 name:"Dogecoin",
-symbol:"DOGE/USD"
+symbol:"DOGE"
 },
 
 {
 id:"avalanche-2",
 name:"Avalanche",
-symbol:"AVAX/USD"
+symbol:"AVAX"
 },
 
 {
 id:"chainlink",
 name:"Chainlink",
-symbol:"LINK/USD"
+symbol:"LINK"
 },
 
 {
 id:"polkadot",
 name:"Polkadot",
-symbol:"DOT/USD"
+symbol:"DOT"
 }
 
 ];
 
-
-
 async function loadCrypto(){
 
+    const ids=coins.map(c=>c.id).join(",");
 
-const ids = coins.map(c=>c.id).join(",");
+    const url=
+    "https://api.coingecko.com/api/v3/simple/price?ids="+
+    ids+
+    "&vs_currencies=usd&include_24hr_change=true";
 
+    try{
 
-const url = 
-"https://api.coingecko.com/api/v3/simple/price?ids="
-+ids+
-"&vs_currencies=usd&include_24hr_change=true";
+        const response=await fetch(url);
+        const data=await response.json();
 
+        let html="";
 
+        coins.forEach(c=>{
 
-try{
+            let coin=data[c.id];
 
+            if(!coin) return;
 
-const response = await fetch(url);
+            let price=coin.usd;
+            let change=coin.usd_24h_change;
 
+            let cls="neutral";
+            let arrow="";
 
-const data = await response.json();
+            if(change>0){
+                cls="green";
+                arrow="▲";
+            }
 
+            if(change<0){
+                cls="red";
+                arrow="▼";
+            }
 
-
-let html="";
-
-
-
-coins.forEach(c=>{
-
-
-let coin=data[c.id];
-
-
-if(!coin) return;
-
-
-
-let price = coin.usd;
-
-
-let change = coin.usd_24h_change;
-
-
-
-let cls="neutral";
-
-
-let arrow="";
-
-
-
-if(change>0){
-
-cls="green";
-arrow="▲";
-
-}
-
-
-if(change<0){
-
-cls="red";
-arrow="▼";
-
-}
-
-
-
-html += `
-
+            html+=`
 
 <div class="crypto-row">
 
+    <div class="left">
 
-<div class="left">
+        <span class="name">${c.name}</span>
 
-<span class="name">
-${c.name}
-</span>
+        <span class="symbol">(${c.symbol})</span>
 
+    </div>
 
-<span class="symbol">
-${c.symbol}
-</span>
+    <div class="price">
 
+        $${formatPrice(price)}
 
-</div>
+    </div>
 
+    <div class="change ${cls}">
 
-<div class="price">
+        ${arrow} ${change.toFixed(2)}%
 
-$${formatPrice(price)}
-
-</div>
-
-
-<div class="change ${cls}">
-
-${arrow} ${change.toFixed(2)}%
+    </div>
 
 </div>
-
-
-</div>
-
 
 `;
 
+        });
 
+        document.getElementById("crypto").innerHTML=html;
 
-});
+    }
 
+    catch(error){
 
+        document.getElementById("crypto").innerHTML="Data momentálne nedostupné";
 
-document.getElementById("crypto").innerHTML=html;
-
-
-
-}
-
-catch(error){
-
-
-document.getElementById("crypto").innerHTML =
-"Data momentálne nedostupné";
-
+    }
 
 }
-
-
-
-}
-
-
 
 function formatPrice(value){
 
+    if(value>=1000){
 
-if(value>=1000){
+        return value.toLocaleString("en-US",{
+            maximumFractionDigits:2
+        });
 
-return value.toLocaleString("en-US",
-{
-maximumFractionDigits:2
-});
+    }
 
-}
-
-
-return value.toFixed(4);
-
+    return value.toFixed(4);
 
 }
-
-
 
 loadCrypto();
 
-
 setInterval(loadCrypto,60000);
 
-
-
 </script>
-
 
 </body>
 
