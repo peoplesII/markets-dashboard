@@ -83,6 +83,11 @@ html, body{
     white-space:nowrap;
 }
 
+.loading{
+    font-size:11px;
+    color:#777;
+}
+
 .green{ color:#008000; }
 .red{ color:#c00000; }
 .neutral{ color:#777; }
@@ -127,7 +132,7 @@ html, body{
 </div>
 
 <div id="commodities" class="commodities-grid">
-Načítavam dáta...
+<span class="loading">Načítavam dáta...</span>
 </div>
 
 </div>
@@ -135,84 +140,103 @@ Načítavam dáta...
 <script>
 const commodities = [
 
-{
-    name:"Gold",
-    symbol:"XAU",
-    price:"2,365.40",
-    change:0.42
-},
+    {
+        name:"Gold",
+        symbol:"GC",
+        yahoo:"GC=F"
+    },
 
-{
-    name:"Silver",
-    symbol:"XAG",
-    price:"30.82",
-    change:-0.18
-},
+    {
+        name:"Silver",
+        symbol:"SI",
+        yahoo:"SI=F"
+    },
 
-{
-    name:"Crude Oil",
-    symbol:"WTI",
-    price:"82.15",
-    change:0.76
-},
+    {
+        name:"Crude Oil",
+        symbol:"WTI",
+        yahoo:"CL=F"
+    },
 
-{
-    name:"Brent Oil",
-    symbol:"BRENT",
-    price:"85.64",
-    change:0.51
-},
+    {
+        name:"Brent Oil",
+        symbol:"BRENT",
+        yahoo:"BZ=F"
+    },
 
-{
-    name:"Natural Gas",
-    symbol:"NG",
-    price:"2.71",
-    change:-1.24
-},
+    {
+        name:"Natural Gas",
+        symbol:"NG",
+        yahoo:"NG=F"
+    },
 
-{
-    name:"Copper",
-    symbol:"HG",
-    price:"4.49",
-    change:0.33
-},
+    {
+        name:"Copper",
+        symbol:"HG",
+        yahoo:"HG=F"
+    },
 
-{
-    name:"Wheat",
-    symbol:"WHEAT",
-    price:"587.25",
-    change:-0.62
-},
+    {
+        name:"Wheat",
+        symbol:"ZW",
+        yahoo:"ZW=F"
+    },
 
-{
-    name:"Corn",
-    symbol:"CORN",
-    price:"421.50",
-    change:0.21
-}
+    {
+        name:"Corn",
+        symbol:"ZC",
+        yahoo:"ZC=F"
+    }
 
 ];
 
-function loadCommodities(){
+async function loadCommodities(){
 
-    let html="";
+    let html = "";
 
-    commodities.forEach(c=>{
+    for(const c of commodities){
 
-        let cls="neutral";
-        let arrow="";
+        try{
 
-        if(c.change>0){
-            cls="green";
-            arrow="▲";
-        }
+            const url =
+            "https://query1.finance.yahoo.com/v8/finance/chart/" +
+            encodeURIComponent(c.yahoo) +
+            "?interval=1d&range=5d";
 
-        if(c.change<0){
-            cls="red";
-            arrow="▼";
-        }
+            const response = await fetch(url);
+            const data = await response.json();
 
-        html+=`
+            const result = data.chart.result[0];
+            const meta = result.meta;
+
+            let price = meta.regularMarketPrice;
+            let previousClose = meta.previousClose;
+
+            if(!previousClose && result.indicators.quote[0].close.length > 1){
+                const closes = result.indicators.quote[0].close.filter(v => v !== null);
+                previousClose = closes[closes.length - 2];
+            }
+
+            let changePercent = 0;
+
+            if(price && previousClose){
+                changePercent = ((price - previousClose) / previousClose) * 100;
+            }
+
+            let cls = "neutral";
+            let arrow = "";
+
+            if(changePercent > 0){
+                cls = "green";
+                arrow = "▲";
+            }
+
+            if(changePercent < 0){
+                cls = "red";
+                arrow = "▼";
+            }
+
+            html += `
 
 <div class="commodity-row">
 
@@ -222,24 +246,69 @@ function loadCommodities(){
     </div>
 
     <div class="price">
-        ${c.price}
+        ${formatPrice(price)}
     </div>
 
     <div class="change ${cls}">
-        ${arrow} ${c.change.toFixed(2)}%
+        ${arrow} ${changePercent.toFixed(2)}%
     </div>
 
 </div>
 
 `;
 
-    });
+        }
 
-    document.getElementById("commodities").innerHTML=html;
+        catch(error){
+
+            html += `
+
+<div class="commodity-row">
+
+    <div class="left">
+        <span class="name">${c.name}</span>
+        <span class="symbol">(${c.symbol})</span>
+    </div>
+
+    <div class="price neutral">
+        --
+    </div>
+
+    <div class="change neutral">
+        --
+    </div>
+
+</div>
+
+`;
+
+        }
+
+    }
+
+    document.getElementById("commodities").innerHTML = html;
+
+}
+
+function formatPrice(value){
+
+    if(!value){
+        return "--";
+    }
+
+    if(value >= 1000){
+        return "$" + value.toLocaleString("en-US",{
+            maximumFractionDigits:2
+        });
+    }
+
+    return "$" + value.toFixed(2);
 
 }
 
 loadCommodities();
+
+setInterval(loadCommodities,300000);
 </script>
 
 </body>
