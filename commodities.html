@@ -1,613 +1,682 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>GAPE Commodities</title>
+<title>GAPE Commodities</title>
 
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #222;
-    }
+<style>
+html,
+body {
+    margin:0;
+    padding:0;
+    background:transparent;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#222;
+}
 
-    .commodities-box {
-      width: 100%;
-      max-width: 900px;
-      box-sizing: border-box;
-      padding: 0;
-    }
+.commodities-box {
+    width:100%;
+    max-width:900px;
+    box-sizing:border-box;
+    padding:0;
+}
 
-    .title {
-      margin-bottom: 6px;
-      color: #222;
-      font-size: 11px;
-      font-weight: bold;
-      letter-spacing: 0.8px;
-      line-height: 1.1;
-    }
+.title-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+}
 
-    .commodities-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px 10px;
-    }
+.title {
+    color:#222;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.8px;
+    line-height:1.1;
+    white-space:nowrap;
+}
 
+.updated {
+    color:#888;
+    font-size:9px;
+    line-height:1.1;
+    text-align:right;
+    white-space:nowrap;
+}
+
+.commodities-grid {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6px 10px;
+}
+
+.commodity-row {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:5px 4px;
+    border-bottom:1px solid rgba(100,100,100,.22);
+    font-size:11px;
+    line-height:1.15;
+}
+
+.left {
+    display:flex;
+    flex:1;
+    align-items:center;
+    gap:6px;
+    min-width:0;
+}
+
+.name {
+    font-size:11px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.symbol {
+    color:#777;
+    font-size:10px;
+    white-space:nowrap;
+}
+
+.price {
+    font-size:12px;
+    font-weight:bold;
+    text-align:right;
+    white-space:nowrap;
+}
+
+.change {
+    width:62px;
+    font-size:10.5px;
+    font-weight:bold;
+    text-align:right;
+    white-space:nowrap;
+}
+
+.loading,
+.error {
+    grid-column:1 / -1;
+    padding:5px 4px;
+    color:#777;
+    font-size:11px;
+}
+
+.green {
+    color:#008000;
+}
+
+.red {
+    color:#c00000;
+}
+
+.neutral {
+    color:#777;
+}
+
+@media(max-width:600px) {
     .commodity-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 5px 4px;
-      border-bottom: 1px solid rgba(100, 100, 100, 0.22);
-      font-size: 11px;
-      line-height: 1.15;
-    }
-
-    .left {
-      display: flex;
-      flex: 1;
-      align-items: center;
-      gap: 6px;
-      min-width: 0;
+        gap:5px;
+        padding:5px 3px;
+        font-size:10px;
     }
 
     .name {
-      font-size: 11px;
-      font-weight: bold;
-      white-space: nowrap;
+        font-size:10px;
     }
 
     .symbol {
-      color: #777;
-      font-size: 10px;
-      white-space: nowrap;
+        font-size:9px;
     }
 
     .price {
-      font-size: 12px;
-      font-weight: bold;
-      text-align: right;
-      white-space: nowrap;
+        font-size:11px;
     }
 
     .change {
-      width: 62px;
-      font-size: 10.5px;
-      font-weight: bold;
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    .loading {
-      padding: 5px 4px;
-      color: #777;
-      font-size: 11px;
+        width:58px;
+        font-size:9.5px;
     }
 
     .updated {
-      margin-top: 5px;
-      color: #999;
-      font-size: 8px;
-      text-align: right;
+        font-size:8.5px;
     }
-
-    .green {
-      color: #008000;
-    }
-
-    .red {
-      color: #c00000;
-    }
-
-    .neutral {
-      color: #777;
-    }
-
-    @media (max-width: 600px) {
-      .commodity-row {
-        font-size: 10px;
-      }
-
-      .name {
-        font-size: 10px;
-      }
-
-      .symbol {
-        font-size: 9px;
-      }
-
-      .price {
-        font-size: 11px;
-      }
-
-      .change {
-        width: 58px;
-        font-size: 9.5px;
-      }
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-  <div class="commodities-box">
+<div class="commodities-box">
 
-    <div class="title">🥇 COMMODITIES</div>
+    <div class="title-row">
 
-    <div id="commodities" class="commodities-grid">
-      <span class="loading">Načítavam dáta...</span>
+        <div class="title">
+            📊 COMMODITIES
+        </div>
+
+        <div id="updated" class="updated">
+            Načítavam...
+        </div>
+
     </div>
 
-    <div id="updated" class="updated"></div>
+    <div id="commodities" class="commodities-grid">
+        <div class="loading">
+            Načítavam dáta...
+        </div>
+    </div>
 
-  </div>
+</div>
 
-  <script>
-    "use strict";
+<script>
+"use strict";
 
-    const commodities = [
-      {
-        name: "Gold",
-        symbol: "GC",
-        yahoo: "GC=F",
-        unit: "$"
-      },
-      {
-        name: "Silver",
-        symbol: "SI",
-        yahoo: "SI=F",
-        unit: "$"
-      },
-      {
-        name: "Crude Oil",
-        symbol: "WTI",
-        yahoo: "CL=F",
-        unit: "$"
-      },
-      {
-        name: "Natural Gas",
-        symbol: "NG",
-        yahoo: "NG=F",
-        unit: "$"
-      },
-      {
-        name: "Copper",
-        symbol: "HG",
-        yahoo: "HG=F",
-        unit: "$"
-      },
-      {
-        name: "Wheat",
-        symbol: "ZW",
-        yahoo: "ZW=F",
-        unit: "¢"
-      },
-      {
-        name: "Corn",
-        symbol: "ZC",
-        yahoo: "ZC=F",
-        unit: "¢"
-      },
-      {
-        name: "Soybeans",
-        symbol: "ZS",
-        yahoo: "ZS=F",
-        unit: "¢"
-      }
-    ];
+const commodities = [
+    {
+        name:"Gold",
+        symbol:"GC",
+        yahoo:"GC=F",
+        unit:"$"
+    },
+    {
+        name:"Silver",
+        symbol:"SI",
+        yahoo:"SI=F",
+        unit:"$"
+    },
+    {
+        name:"Crude Oil",
+        symbol:"WTI",
+        yahoo:"CL=F",
+        unit:"$"
+    },
+    {
+        name:"Natural Gas",
+        symbol:"NG",
+        yahoo:"NG=F",
+        unit:"$"
+    },
+    {
+        name:"Copper",
+        symbol:"HG",
+        yahoo:"HG=F",
+        unit:"$"
+    },
+    {
+        name:"Wheat",
+        symbol:"ZW",
+        yahoo:"ZW=F",
+        unit:"¢"
+    },
+    {
+        name:"Corn",
+        symbol:"ZC",
+        yahoo:"ZC=F",
+        unit:"¢"
+    },
+    {
+        name:"Soybeans",
+        symbol:"ZS",
+        yahoo:"ZS=F",
+        unit:"¢"
+    }
+];
 
-    /*
-     * Yahoo Finance nepovoľuje priame volanie z GitHub Pages.
-     * Preto sa použijú záložné CORS proxy servery.
-     */
-    const proxyBuilders = [
-      function (url) {
+/*
+ * Yahoo Finance nepovoľuje priame volanie z GitHub Pages.
+ * Preto sa používajú záložné CORS proxy servery.
+ */
+const proxyBuilders = [
+    function(url) {
         return (
-          "https://corsproxy.io/?url=" +
-          encodeURIComponent(url)
+            "https://corsproxy.io/?url=" +
+            encodeURIComponent(url)
         );
-      },
+    },
 
-      function (url) {
+    function(url) {
         return (
-          "https://api.allorigins.win/raw?url=" +
-          encodeURIComponent(url)
+            "https://api.allorigins.win/raw?url=" +
+            encodeURIComponent(url)
         );
-      },
+    },
 
-      function (url) {
+    function(url) {
         return (
-          "https://r.jina.ai/http://" +
-          url.replace(/^https?:\/\//, "")
+            "https://r.jina.ai/http://" +
+            url.replace(/^https?:\/\//, "")
         );
-      }
-    ];
+    }
+];
 
-    function fetchWithTimeout(url, timeout) {
-      const controller = new AbortController();
+function fetchWithTimeout(url, timeout) {
+    const controller =
+        new AbortController();
 
-      const timer = setTimeout(function () {
-        controller.abort();
-      }, timeout);
+    const timer =
+        setTimeout(function() {
+            controller.abort();
+        }, timeout);
 
-      return fetch(url, {
-        cache: "no-store",
-        signal: controller.signal
-      }).finally(function () {
+    return fetch(url, {
+        cache:"no-store",
+        signal:controller.signal
+    }).finally(function() {
         clearTimeout(timer);
-      });
-    }
+    });
+}
 
-    async function fetchJsonWithFallback(url) {
-      const errors = [];
+async function fetchJsonWithFallback(url) {
+    const errors = [];
 
-      for (const buildProxyUrl of proxyBuilders) {
+    for(const buildProxyUrl of proxyBuilders) {
         try {
-          const proxyUrl = buildProxyUrl(url);
+            const proxyUrl =
+                buildProxyUrl(url);
 
-          const response = await fetchWithTimeout(
-            proxyUrl,
-            12000
-          );
+            const response =
+                await fetchWithTimeout(
+                    proxyUrl,
+                    12000
+                );
 
-          if (!response.ok) {
-            throw new Error(
-              "HTTP " + response.status
-            );
-          }
-
-          let text = await response.text();
-
-          /*
-           * Jina AI pridáva pred JSON krátky textový nadpis.
-           * Odstránime ho pred spracovaním JSON.
-           */
-          if (proxyUrl.includes("r.jina.ai")) {
-            const marker =
-              text.indexOf("Markdown Content:");
-
-            if (marker !== -1) {
-              text = text
-                .substring(marker + 17)
-                .trim();
+            if(!response.ok) {
+                throw new Error(
+                    "HTTP " + response.status
+                );
             }
-          }
 
-          const firstBrace = text.indexOf("{");
+            let text =
+                await response.text();
 
-          if (firstBrace > 0) {
-            text = text.substring(firstBrace);
-          }
+            /*
+             * Jina pridáva pred JSON textový nadpis.
+             * Pred spracovaním ho odstránime.
+             */
+            if(proxyUrl.includes("r.jina.ai")) {
+                const marker =
+                    text.indexOf(
+                        "Markdown Content:"
+                    );
 
-          const data = JSON.parse(text);
+                if(marker !== -1) {
+                    text = text
+                        .substring(marker + 17)
+                        .trim();
+                }
+            }
 
-          if (
-            !data ||
-            !data.chart ||
-            !data.chart.result ||
-            !data.chart.result[0]
-          ) {
-            throw new Error(
-              "Neplatná odpoveď API"
-            );
-          }
+            const firstBrace =
+                text.indexOf("{");
 
-          return data;
-        } catch (error) {
-          errors.push(error.message);
+            if(firstBrace > 0) {
+                text =
+                    text.substring(firstBrace);
+            }
+
+            const data =
+                JSON.parse(text);
+
+            if(
+                !data ||
+                !data.chart ||
+                !data.chart.result ||
+                !data.chart.result[0]
+            ) {
+                throw new Error(
+                    "Neplatná odpoveď API"
+                );
+            }
+
+            return data;
         }
-      }
-
-      throw new Error(
-        errors.join(" | ")
-      );
+        catch(error) {
+            errors.push(error.message);
+        }
     }
 
-    async function loadCommodity(item) {
-      const yahooUrl =
+    throw new Error(
+        errors.join(" | ")
+    );
+}
+
+async function loadCommodity(item) {
+    const yahooUrl =
         "https://query1.finance.yahoo.com/v8/finance/chart/" +
         encodeURIComponent(item.yahoo) +
         "?range=5d&interval=1d&_=" +
         Date.now();
 
-      const data =
-        await fetchJsonWithFallback(yahooUrl);
+    const data =
+        await fetchJsonWithFallback(
+            yahooUrl
+        );
 
-      const result =
+    const result =
         data.chart.result[0];
 
-      const meta =
+    const meta =
         result.meta;
 
-      if (
+    if(
         !meta ||
         meta.symbol !== item.yahoo
-      ) {
+    ) {
         throw new Error(
-          "Neplatné dáta pre " + item.yahoo
+            "Neplatné dáta pre " +
+            item.yahoo
         );
-      }
+    }
 
-      let price =
+    let price =
         Number(meta.regularMarketPrice);
 
-      let previousClose =
+    let previousClose =
         Number(meta.chartPreviousClose);
 
-      /*
-       * Ak meta údaje nemajú cenu, použijeme
-       * poslednú platnú dennú zatváraciu cenu.
-       */
-      if (!Number.isFinite(price)) {
-        const quote =
-          result.indicators &&
-          result.indicators.quote &&
-          result.indicators.quote[0];
+    const quote =
+        result.indicators &&
+        result.indicators.quote &&
+        result.indicators.quote[0];
 
-        if (quote && quote.close) {
-          for (
+    /*
+     * Ak hlavná cena chýba, použijeme
+     * poslednú platnú zatváraciu cenu.
+     */
+    if(
+        !Number.isFinite(price) &&
+        quote &&
+        quote.close
+    ) {
+        for(
             let i = quote.close.length - 1;
             i >= 0;
             i--
-          ) {
+        ) {
             const close =
-              Number(quote.close[i]);
+                Number(quote.close[i]);
 
-            if (Number.isFinite(close)) {
-              price = close;
-              break;
+            if(Number.isFinite(close)) {
+                price = close;
+                break;
             }
-          }
         }
-      }
+    }
 
-      if (!Number.isFinite(price)) {
+    if(!Number.isFinite(price)) {
         throw new Error(
-          "Neplatná cena pre " + item.yahoo
+            "Neplatná cena pre " +
+            item.yahoo
         );
-      }
+    }
 
-      /*
-       * Ak Yahoo neposlalo previous close,
-       * použijeme predposlednú dennú cenu.
-       */
-      if (
-        !Number.isFinite(previousClose) ||
-        previousClose === 0
-      ) {
-        const quote =
-          result.indicators &&
-          result.indicators.quote &&
-          result.indicators.quote[0];
-
-        if (quote && quote.close) {
-          const validCloses =
+    /*
+     * Ak predchádzajúca cena chýba,
+     * použijeme predposlednú dennú cenu.
+     */
+    if(
+        (
+            !Number.isFinite(previousClose) ||
+            previousClose === 0
+        ) &&
+        quote &&
+        quote.close
+    ) {
+        const validCloses =
             quote.close
-              .map(Number)
-              .filter(Number.isFinite);
+                .map(Number)
+                .filter(Number.isFinite);
 
-          if (validCloses.length >= 2) {
+        if(validCloses.length >= 2) {
             previousClose =
-              validCloses[
-                validCloses.length - 2
-              ];
-          }
+                validCloses[
+                    validCloses.length - 2
+                ];
         }
-      }
+    }
 
-      let changePercent = null;
+    let changePercent = null;
 
-      if (
+    if(
         Number.isFinite(previousClose) &&
         previousClose !== 0
-      ) {
+    ) {
         changePercent =
-          (
-            (price - previousClose) /
-            previousClose
-          ) * 100;
-      }
-
-      return {
-        name: item.name,
-        symbol: item.symbol,
-        yahoo: item.yahoo,
-        unit: item.unit,
-        price: price,
-        changePercent: changePercent
-      };
+            (
+                (price - previousClose) /
+                previousClose
+            ) * 100;
     }
 
-    async function loadCommodities() {
-      const container =
-        document.getElementById("commodities");
+    return {
+        name:item.name,
+        symbol:item.symbol,
+        yahoo:item.yahoo,
+        unit:item.unit,
+        price:price,
+        changePercent:changePercent
+    };
+}
 
-      const updated =
-        document.getElementById("updated");
+async function loadCommodities() {
+    const container =
+        document.getElementById(
+            "commodities"
+        );
 
-      updated.textContent =
+    const updated =
+        document.getElementById(
+            "updated"
+        );
+
+    updated.textContent =
         "Aktualizujem...";
 
-      try {
+    try {
         const results =
-          await Promise.allSettled(
-            commodities.map(function (item) {
-              return loadCommodity(item);
-            })
-          );
-
-        const rows = results
-          .filter(function (result) {
-            return result.status === "fulfilled";
-          })
-          .map(function (result) {
-            return result.value;
-          });
-
-        if (rows.length === 0) {
-          container.innerHTML =
-            '<span class="loading">' +
-            "Dáta momentálne nedostupné" +
-            "</span>";
-
-          updated.textContent =
-            "Načítanie zlyhalo";
-
-          return;
-        }
-
-        container.innerHTML =
-          rows
-            .map(renderCommodity)
-            .join("");
+            await Promise.allSettled(
+                commodities.map(
+                    function(item) {
+                        return loadCommodity(
+                            item
+                        );
+                    }
+                )
+            );
 
         /*
-         * Ak niektorý symbol zlyhal,
-         * zobrazíme ho ako N/A.
+         * Zachováme pôvodné poradie položiek.
          */
-        const loadedSymbols =
-          new Set(
-            rows.map(function (item) {
-              return item.yahoo;
-            })
-          );
+        const html =
+            results.map(
+                function(result, index) {
+                    if(
+                        result.status ===
+                        "fulfilled"
+                    ) {
+                        return renderCommodity(
+                            result.value
+                        );
+                    }
 
-        const missingRows =
-          commodities
-            .filter(function (item) {
-              return !loadedSymbols.has(
-                item.yahoo
-              );
-            })
-            .map(renderMissingCommodity)
-            .join("");
+                    return renderMissingCommodity(
+                        commodities[index]
+                    );
+                }
+            ).join("");
 
-        container.innerHTML +=
-          missingRows;
+        const successfulCount =
+            results.filter(
+                function(result) {
+                    return (
+                        result.status ===
+                        "fulfilled"
+                    );
+                }
+            ).length;
 
-        updated.textContent =
-          "Aktualizované: " +
-          new Date().toLocaleTimeString(
-            "sk-SK",
-            {
-              hour: "2-digit",
-              minute: "2-digit"
-            }
-          );
-      } catch (error) {
-        console.error(
-          "Commodities chyba:",
-          error
-        );
+        if(successfulCount === 0) {
+            container.innerHTML = `
+                <div class="error">
+                    Dáta momentálne nie sú dostupné.
+                </div>
+            `;
 
-        container.innerHTML =
-          '<span class="loading">' +
-          "Dáta momentálne nedostupné" +
-          "</span>";
+            updated.textContent =
+                "Dáta nedostupné";
 
-        updated.textContent =
-          "Načítanie zlyhalo";
-      }
-    }
-
-    function renderCommodity(item) {
-      let colorClass = "neutral";
-      let arrow = "•";
-      let changeText = "N/A";
-
-      if (
-        Number.isFinite(item.changePercent)
-      ) {
-        changeText =
-          item.changePercent.toFixed(2) +
-          "%";
-
-        if (item.changePercent > 0) {
-          colorClass = "green";
-          arrow = "▲";
-        } else if (
-          item.changePercent < 0
-        ) {
-          colorClass = "red";
-          arrow = "▼";
+            return;
         }
-      }
 
-      return `
-        <div class="commodity-row">
-          <div class="left">
-            <span class="name">${item.name}</span>
-            <span class="symbol">(${item.symbol})</span>
-          </div>
+        container.innerHTML = html;
 
-          <div class="price">
-            ${formatPrice(item.price, item.unit)}
-          </div>
-
-          <div class="change ${colorClass}">
-            ${arrow} ${changeText}
-          </div>
-        </div>
-      `;
+        updated.textContent =
+            "Aktualizované: " +
+            new Date().toLocaleTimeString(
+                "sk-SK",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit"
+                }
+            );
     }
-
-    function renderMissingCommodity(item) {
-      return `
-        <div class="commodity-row">
-          <div class="left">
-            <span class="name">${item.name}</span>
-            <span class="symbol">(${item.symbol})</span>
-          </div>
-
-          <div class="price neutral">
-            N/A
-          </div>
-
-          <div class="change neutral">
-            N/A
-          </div>
-        </div>
-      `;
-    }
-
-    function formatPrice(value, unit) {
-      if (!Number.isFinite(value)) {
-        return "N/A";
-      }
-
-      const formatted =
-        value.toLocaleString(
-          "en-US",
-          {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 3
-          }
+    catch(error) {
+        console.error(
+            "Commodities chyba:",
+            error
         );
 
-      /*
-       * Obilniny Yahoo uvádza v centoch za bušel.
-       * Ostatné futures zostávajú v USD.
-       */
-      if (unit === "¢") {
-        return formatted + "¢";
-      }
+        container.innerHTML = `
+            <div class="error">
+                Dáta momentálne nie sú dostupné.
+            </div>
+        `;
 
-      return "$" + formatted;
+        updated.textContent =
+            "Dáta nedostupné";
+    }
+}
+
+function renderCommodity(item) {
+    let colorClass = "neutral";
+    let arrow = "•";
+    let changeText = "N/A";
+
+    if(
+        Number.isFinite(
+            item.changePercent
+        )
+    ) {
+        changeText =
+            Math.abs(
+                item.changePercent
+            ).toFixed(2) + "%";
+
+        if(item.changePercent > 0) {
+            colorClass = "green";
+            arrow = "▲";
+        }
+        else if(item.changePercent < 0) {
+            colorClass = "red";
+            arrow = "▼";
+        }
     }
 
-    loadCommodities();
+    return `
+        <div class="commodity-row">
 
-    setInterval(
-      loadCommodities,
-      300000
-    );
-  </script>
+            <div class="left">
+                <span class="name">
+                    ${item.name}
+                </span>
+
+                <span class="symbol">
+                    (${item.symbol})
+                </span>
+            </div>
+
+            <div class="price">
+                ${formatPrice(
+                    item.price,
+                    item.unit
+                )}
+            </div>
+
+            <div class="change ${colorClass}">
+                ${arrow} ${changeText}
+            </div>
+
+        </div>
+    `;
+}
+
+function renderMissingCommodity(item) {
+    return `
+        <div class="commodity-row">
+
+            <div class="left">
+                <span class="name">
+                    ${item.name}
+                </span>
+
+                <span class="symbol">
+                    (${item.symbol})
+                </span>
+            </div>
+
+            <div class="price neutral">
+                N/A
+            </div>
+
+            <div class="change neutral">
+                N/A
+            </div>
+
+        </div>
+    `;
+}
+
+function formatPrice(value, unit) {
+    if(!Number.isFinite(value)) {
+        return "N/A";
+    }
+
+    const formatted =
+        value.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:3
+            }
+        );
+
+    /*
+     * Obilniny Yahoo uvádza v centoch za bušel.
+     */
+    if(unit === "¢") {
+        return formatted + "¢";
+    }
+
+    return "$" + formatted;
+}
+
+loadCommodities();
+
+/*
+ * Automatická aktualizácia každých 5 minút.
+ */
+setInterval(
+    loadCommodities,
+    5 * 60 * 1000
+);
+</script>
 
 </body>
 </html>
