@@ -1,655 +1,829 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>GAPE Market Sentiment</title>
+<title>GAPE Market Sentiment</title>
 
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #222;
-    }
+<style>
+html,
+body {
+    margin:0;
+    padding:0;
+    background:transparent;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#222;
+}
 
-    .container {
-      width: 100%;
-      max-width: 900px;
-      box-sizing: border-box;
-      padding: 0;
-    }
+.container {
+    width:100%;
+    max-width:900px;
+    box-sizing:border-box;
+    padding:0;
+}
 
-    .title {
-      font-size: 11px;
-      font-weight: bold;
-      letter-spacing: 0.8px;
-      margin-bottom: 6px;
-      line-height: 1.1;
-    }
+.title-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px 10px;
-    }
+.title {
+    color:#222;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.8px;
+    line-height:1.1;
+    white-space:nowrap;
+}
 
-    .card {
-      border-bottom: 1px solid rgba(100, 100, 100, 0.22);
-      padding: 5px 4px;
-    }
+.updated {
+    color:#888;
+    font-size:9px;
+    line-height:1.1;
+    text-align:right;
+    white-space:nowrap;
+}
 
-    .row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      line-height: 1.15;
-    }
+.grid {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6px 10px;
+}
 
+.card {
+    padding:5px 4px;
+    border-bottom:1px solid rgba(100,100,100,.22);
+}
+
+.row {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    line-height:1.15;
+}
+
+.label {
+    color:#777;
+    font-size:11px;
+    white-space:nowrap;
+}
+
+.value {
+    font-size:12px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.status {
+    min-height:12px;
+    margin-top:3px;
+    font-size:10.5px;
+    font-weight:bold;
+    line-height:1.1;
+    text-align:right;
+}
+
+.green {
+    color:#008000;
+}
+
+.red {
+    color:#c00000;
+}
+
+.orange {
+    color:#c87800;
+}
+
+.neutral {
+    color:#777;
+}
+
+.meter-card {
+    margin-top:6px;
+    padding:5px 4px 0;
+}
+
+.meter-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    margin-bottom:4px;
+}
+
+.meter {
+    height:8px;
+    overflow:hidden;
+    background:#ddd;
+    border-radius:10px;
+}
+
+.progress {
+    width:50%;
+    height:100%;
+    background:#c87800;
+    transition:
+        width .4s ease,
+        background .4s ease;
+}
+
+.scale {
+    display:flex;
+    justify-content:space-between;
+    margin-top:3px;
+    color:#666;
+    font-size:9.5px;
+    line-height:1.1;
+}
+
+@media(max-width:600px) {
     .label {
-      font-size: 11px;
-      color: #777;
-      white-space: nowrap;
+        font-size:10px;
     }
 
     .value {
-      font-size: 12px;
-      font-weight: bold;
-      white-space: nowrap;
+        font-size:11px;
     }
 
     .status {
-      min-height: 12px;
-      margin-top: 3px;
-      font-size: 10.5px;
-      font-weight: bold;
-      line-height: 1.1;
-      text-align: right;
-    }
-
-    .green {
-      color: #008000;
-    }
-
-    .red {
-      color: #c00000;
-    }
-
-    .orange {
-      color: #c87800;
-    }
-
-    .neutral {
-      color: #777;
-    }
-
-    .meter-card {
-      margin-top: 6px;
-      padding: 5px 4px 0;
-    }
-
-    .meter-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .meter {
-      height: 8px;
-      overflow: hidden;
-      background: #ddd;
-      border-radius: 10px;
-    }
-
-    .progress {
-      width: 50%;
-      height: 100%;
-      background: #c87800;
-      transition:
-        width 0.4s ease,
-        background 0.4s ease;
+        font-size:9.5px;
     }
 
     .scale {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 3px;
-      color: #666;
-      font-size: 9.5px;
-      line-height: 1.1;
+        font-size:9px;
     }
 
     .updated {
-      margin-top: 5px;
-      color: #999;
-      font-size: 8px;
-      text-align: right;
+        font-size:8.5px;
     }
-
-    @media (max-width: 600px) {
-      .label {
-        font-size: 10px;
-      }
-
-      .value {
-        font-size: 11px;
-      }
-
-      .status {
-        font-size: 9.5px;
-      }
-
-      .scale {
-        font-size: 9px;
-      }
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
 
-    <div class="title">📊 MARKET SENTIMENT</div>
+<div class="container">
+
+    <div class="title-row">
+
+        <div class="title">
+            📊 MARKET SENTIMENT
+        </div>
+
+        <div id="updated" class="updated">
+            Načítavam...
+        </div>
+
+    </div>
 
     <div class="grid">
 
-      <div class="card">
-        <div class="row">
-          <div class="label">Crypto F&amp;G</div>
-          <div id="cryptoValue" class="value">...</div>
+        <div class="card">
+
+            <div class="row">
+                <div class="label">
+                    Crypto F&amp;G
+                </div>
+
+                <div id="cryptoValue" class="value">
+                    ...
+                </div>
+            </div>
+
+            <div id="cryptoStatus" class="status neutral">
+                Načítavam...
+            </div>
+
         </div>
 
-        <div id="cryptoStatus" class="status neutral">
-          Načítavam...
-        </div>
-      </div>
+        <div class="card">
 
-      <div class="card">
-        <div class="row">
-          <div class="label">VIX</div>
-          <div id="vixValue" class="value">...</div>
-        </div>
+            <div class="row">
+                <div class="label">
+                    VIX
+                </div>
 
-        <div id="vixStatus" class="status neutral">
-          Načítavam...
-        </div>
-      </div>
+                <div id="vixValue" class="value">
+                    ...
+                </div>
+            </div>
 
-      <div class="card">
-        <div class="row">
-          <div class="label">SPY Trend</div>
-          <div id="spyValue" class="value">...</div>
+            <div id="vixStatus" class="status neutral">
+                Načítavam...
+            </div>
+
         </div>
 
-        <div id="spyStatus" class="status neutral">
-          Načítavam...
-        </div>
-      </div>
+        <div class="card">
 
-      <div class="card">
-        <div class="row">
-          <div class="label">Condition</div>
-          <div id="conditionValue" class="value">...</div>
+            <div class="row">
+                <div class="label">
+                    SPY Trend
+                </div>
+
+                <div id="spyValue" class="value">
+                    ...
+                </div>
+            </div>
+
+            <div id="spyStatus" class="status neutral">
+                Načítavam...
+            </div>
+
         </div>
 
-        <div id="conditionStatus" class="status neutral">
-          Načítavam...
+        <div class="card">
+
+            <div class="row">
+                <div class="label">
+                    Condition
+                </div>
+
+                <div id="conditionValue" class="value">
+                    ...
+                </div>
+            </div>
+
+            <div id="conditionStatus" class="status neutral">
+                Načítavam...
+            </div>
+
         </div>
-      </div>
 
     </div>
 
     <div class="meter-card">
 
-      <div class="meter-header">
-        <div class="label">Fear → Greed Meter</div>
-      </div>
+        <div class="meter-header">
+            <div class="label">
+                Fear → Greed Meter
+            </div>
+        </div>
 
-      <div class="meter">
-        <div id="meter" class="progress"></div>
-      </div>
+        <div class="meter">
+            <div id="meter" class="progress"></div>
+        </div>
 
-      <div class="scale">
-        <span>Extreme Fear</span>
-        <span>Neutral</span>
-        <span>Extreme Greed</span>
-      </div>
-
-      <div id="updated" class="updated"></div>
+        <div class="scale">
+            <span>Extreme Fear</span>
+            <span>Neutral</span>
+            <span>Extreme Greed</span>
+        </div>
 
     </div>
 
-  </div>
+</div>
 
-  <script>
-    "use strict";
+<script>
+"use strict";
 
-    var latestCrypto = null;
-    var latestVix = null;
-    var latestSpyChange = null;
+var latestCrypto = null;
+var latestVix = null;
+var latestSpyChange = null;
 
-    function byId(id) {
-      return document.getElementById(id);
-    }
+function byId(id) {
+    return document.getElementById(id);
+}
 
-    function setStatus(id, text, color) {
-      var element = byId(id);
+function setStatus(id, text, color) {
+    var element = byId(id);
 
-      element.textContent = text;
-      element.className = "status " + color;
-    }
+    element.textContent = text;
+    element.className = "status " + color;
+}
 
-    function fetchWithTimeout(url, timeout) {
-      var controller = new AbortController();
+function fetchWithTimeout(url, timeout) {
+    var controller =
+        new AbortController();
 
-      var timer = setTimeout(function () {
-        controller.abort();
-      }, timeout);
+    var timer =
+        setTimeout(function() {
+            controller.abort();
+        }, timeout);
 
-      return fetch(url, {
-        cache: "no-store",
-        signal: controller.signal
-      }).finally(function () {
+    return fetch(url, {
+        cache:"no-store",
+        signal:controller.signal
+    }).finally(function() {
         clearTimeout(timer);
-      });
-    }
+    });
+}
 
-    /*
-     * Skúsi priamu URL a potom niekoľko CORS proxy serverov.
-     * Vďaka tomu stránka nezávisí iba od AllOrigins.
-     */
-    async function fetchJsonWithFallback(targetUrl) {
-      var urls = [
+/*
+ * Skúsi priamu adresu a potom záložné proxy servery.
+ */
+async function fetchJsonWithFallback(targetUrl) {
+    var urls = [
         targetUrl,
 
         "https://corsproxy.io/?url=" +
-          encodeURIComponent(targetUrl),
+            encodeURIComponent(targetUrl),
 
         "https://api.allorigins.win/raw?url=" +
-          encodeURIComponent(targetUrl),
+            encodeURIComponent(targetUrl),
 
         "https://r.jina.ai/http://" +
-          targetUrl.replace(/^https?:\/\//, "")
-      ];
+            targetUrl.replace(/^https?:\/\//, "")
+    ];
 
-      var errors = [];
+    var errors = [];
 
-      for (var i = 0; i < urls.length; i++) {
+    for(var i = 0; i < urls.length; i++) {
         try {
-          var response = await fetchWithTimeout(urls[i], 10000);
+            var response =
+                await fetchWithTimeout(
+                    urls[i],
+                    10000
+                );
 
-          if (!response.ok) {
-            throw new Error("HTTP " + response.status);
-          }
-
-          var text = await response.text();
-
-          /*
-           * Jina proxy pridáva pred JSON textový nadpis.
-           * Odrežeme všetko pred prvou JSON zátvorkou.
-           */
-          if (urls[i].indexOf("r.jina.ai") !== -1) {
-            var marker = text.indexOf("Markdown Content:");
-
-            if (marker !== -1) {
-              text = text.substring(marker + 17).trim();
+            if(!response.ok) {
+                throw new Error(
+                    "HTTP " + response.status
+                );
             }
-          }
 
-          var firstBrace = text.indexOf("{");
+            var text =
+                await response.text();
 
-          if (firstBrace > 0) {
-            text = text.substring(firstBrace);
-          }
+            /*
+             * Jina pridáva pred JSON textový nadpis.
+             */
+            if(
+                urls[i].indexOf(
+                    "r.jina.ai"
+                ) !== -1
+            ) {
+                var marker =
+                    text.indexOf(
+                        "Markdown Content:"
+                    );
 
-          return JSON.parse(text);
-        } catch (error) {
-          errors.push(error.message);
+                if(marker !== -1) {
+                    text = text
+                        .substring(marker + 17)
+                        .trim();
+                }
+            }
+
+            var firstBrace =
+                text.indexOf("{");
+
+            if(firstBrace > 0) {
+                text =
+                    text.substring(firstBrace);
+            }
+
+            return JSON.parse(text);
         }
-      }
-
-      throw new Error(errors.join(" | "));
+        catch(error) {
+            errors.push(error.message);
+        }
     }
 
-    async function loadCryptoFear() {
-      try {
+    throw new Error(
+        errors.join(" | ")
+    );
+}
+
+async function loadCryptoFear() {
+    try {
         var url =
-          "https://api.alternative.me/fng/?limit=1&_=" +
-          Date.now();
+            "https://api.alternative.me/fng/" +
+            "?limit=1&_=" +
+            Date.now();
 
-        var data = await fetchJsonWithFallback(url);
+        var data =
+            await fetchJsonWithFallback(url);
 
-        if (
-          !data ||
-          !data.data ||
-          !data.data[0]
+        if(
+            !data ||
+            !data.data ||
+            !data.data[0]
         ) {
-          throw new Error("Crypto API neposlalo údaje");
+            throw new Error(
+                "Crypto API neposlalo údaje"
+            );
         }
 
-        var value = Number(data.data[0].value);
+        var value =
+            Number(data.data[0].value);
 
-        if (!Number.isFinite(value)) {
-          throw new Error("Neplatná Crypto hodnota");
+        if(!Number.isFinite(value)) {
+            throw new Error(
+                "Neplatná Crypto hodnota"
+            );
         }
 
         latestCrypto = value;
 
-        byId("cryptoValue").textContent = value;
+        byId("cryptoValue").textContent =
+            value;
 
-        if (value < 25) {
-          setStatus(
-            "cryptoStatus",
-            "EXTREME FEAR 🔴",
-            "red"
-          );
-        } else if (value < 50) {
-          setStatus(
-            "cryptoStatus",
-            "FEAR",
-            "orange"
-          );
-        } else if (value < 75) {
-          setStatus(
-            "cryptoStatus",
-            "GREED 🟢",
-            "green"
-          );
-        } else {
-          setStatus(
-            "cryptoStatus",
-            "EXTREME GREED 🔥",
-            "red"
-          );
+        if(value < 25) {
+            setStatus(
+                "cryptoStatus",
+                "EXTREME FEAR 🔴",
+                "red"
+            );
         }
-      } catch (error) {
-        console.error("Crypto chyba:", error);
+        else if(value < 50) {
+            setStatus(
+                "cryptoStatus",
+                "FEAR",
+                "orange"
+            );
+        }
+        else if(value < 75) {
+            setStatus(
+                "cryptoStatus",
+                "GREED 🟢",
+                "green"
+            );
+        }
+        else {
+            setStatus(
+                "cryptoStatus",
+                "EXTREME GREED 🔥",
+                "red"
+            );
+        }
+    }
+    catch(error) {
+        console.error(
+            "Crypto chyba:",
+            error
+        );
 
         latestCrypto = null;
-        byId("cryptoValue").textContent = "N/A";
+
+        byId("cryptoValue").textContent =
+            "N/A";
 
         setStatus(
-          "cryptoStatus",
-          "ÚDAJE NEDOSTUPNÉ",
-          "neutral"
+            "cryptoStatus",
+            "ÚDAJE NEDOSTUPNÉ",
+            "neutral"
         );
-      }
-
-      updateCondition();
     }
 
-    async function fetchYahoo(symbol) {
-      var url =
+    updateCondition();
+}
+
+async function fetchYahoo(symbol) {
+    var url =
         "https://query1.finance.yahoo.com/v8/finance/chart/" +
         encodeURIComponent(symbol) +
         "?range=5d&interval=1d&_=" +
         Date.now();
 
-      var data = await fetchJsonWithFallback(url);
+    var data =
+        await fetchJsonWithFallback(url);
 
-      if (
+    if(
         !data ||
         !data.chart ||
         !data.chart.result ||
         !data.chart.result[0]
-      ) {
-        throw new Error("Yahoo neposlalo údaje pre " + symbol);
-      }
-
-      var result = data.chart.result[0];
-      var quote = result.indicators.quote[0];
-
-      if (!quote || !quote.close) {
-        throw new Error("Chýbajú ceny pre " + symbol);
-      }
-
-      for (var i = quote.close.length - 1; i >= 0; i--) {
-        var open = Number(quote.open[i]);
-        var close = Number(quote.close[i]);
-
-        if (
-          Number.isFinite(open) &&
-          Number.isFinite(close) &&
-          open > 0
-        ) {
-          return {
-            open: open,
-            close: close
-          };
-        }
-      }
-
-      throw new Error("Nenájdená platná cena pre " + symbol);
+    ) {
+        throw new Error(
+            "Yahoo neposlalo údaje pre " +
+            symbol
+        );
     }
 
-    async function loadVix() {
-      try {
-        var vix = await fetchYahoo("^VIX");
+    var result =
+        data.chart.result[0];
 
-        latestVix = vix.close;
+    var quote =
+        result.indicators &&
+        result.indicators.quote &&
+        result.indicators.quote[0];
+
+    if(
+        !quote ||
+        !quote.close ||
+        !quote.open
+    ) {
+        throw new Error(
+            "Chýbajú ceny pre " +
+            symbol
+        );
+    }
+
+    for(
+        var i = quote.close.length - 1;
+        i >= 0;
+        i--
+    ) {
+        var open =
+            Number(quote.open[i]);
+
+        var close =
+            Number(quote.close[i]);
+
+        if(
+            Number.isFinite(open) &&
+            Number.isFinite(close) &&
+            open > 0
+        ) {
+            return {
+                open:open,
+                close:close
+            };
+        }
+    }
+
+    throw new Error(
+        "Nenájdená platná cena pre " +
+        symbol
+    );
+}
+
+async function loadVix() {
+    try {
+        var vix =
+            await fetchYahoo("^VIX");
+
+        latestVix =
+            vix.close;
 
         byId("vixValue").textContent =
-          latestVix.toFixed(2);
+            latestVix.toFixed(2);
 
-        if (latestVix < 15) {
-          setStatus(
-            "vixStatus",
-            "VERY LOW FEAR",
-            "green"
-          );
-        } else if (latestVix < 20) {
-          setStatus(
-            "vixStatus",
-            "LOW VOLATILITY",
-            "green"
-          );
-        } else if (latestVix < 30) {
-          setStatus(
-            "vixStatus",
-            "ELEVATED RISK",
-            "orange"
-          );
-        } else {
-          setStatus(
-            "vixStatus",
-            "HIGH FEAR 🔴",
-            "red"
-          );
+        if(latestVix < 15) {
+            setStatus(
+                "vixStatus",
+                "VERY LOW FEAR",
+                "green"
+            );
         }
-      } catch (error) {
-        console.error("VIX chyba:", error);
+        else if(latestVix < 20) {
+            setStatus(
+                "vixStatus",
+                "LOW VOLATILITY",
+                "green"
+            );
+        }
+        else if(latestVix < 30) {
+            setStatus(
+                "vixStatus",
+                "ELEVATED RISK",
+                "orange"
+            );
+        }
+        else {
+            setStatus(
+                "vixStatus",
+                "HIGH FEAR 🔴",
+                "red"
+            );
+        }
+    }
+    catch(error) {
+        console.error(
+            "VIX chyba:",
+            error
+        );
 
         latestVix = null;
-        byId("vixValue").textContent = "N/A";
+
+        byId("vixValue").textContent =
+            "N/A";
 
         setStatus(
-          "vixStatus",
-          "ÚDAJE NEDOSTUPNÉ",
-          "neutral"
+            "vixStatus",
+            "ÚDAJE NEDOSTUPNÉ",
+            "neutral"
         );
-      }
-
-      updateCondition();
     }
 
-    async function loadSpy() {
-      try {
-        var spy = await fetchYahoo("SPY");
+    updateCondition();
+}
+
+async function loadSpy() {
+    try {
+        var spy =
+            await fetchYahoo("SPY");
 
         latestSpyChange =
-          ((spy.close - spy.open) / spy.open) * 100;
+            (
+                (spy.close - spy.open) /
+                spy.open
+            ) * 100;
 
         var color = "orange";
         var status = "NEUTRAL";
 
-        if (latestSpyChange > 0.30) {
-          color = "green";
-          status = "RISK ON 🟢";
-        } else if (latestSpyChange < -0.30) {
-          color = "red";
-          status = "RISK OFF 🔴";
+        if(latestSpyChange > .30) {
+            color = "green";
+            status = "RISK ON 🟢";
+        }
+        else if(latestSpyChange < -.30) {
+            color = "red";
+            status = "RISK OFF 🔴";
         }
 
         byId("spyValue").textContent =
-          (latestSpyChange >= 0 ? "▲ " : "▼ ") +
-          latestSpyChange.toFixed(2) +
-          "%";
+            (
+                latestSpyChange >= 0
+                    ? "▲ "
+                    : "▼ "
+            ) +
+            Math.abs(
+                latestSpyChange
+            ).toFixed(2) +
+            "%";
 
         byId("spyValue").className =
-          "value " + color;
+            "value " + color;
 
         setStatus(
-          "spyStatus",
-          status,
-          color
+            "spyStatus",
+            status,
+            color
         );
-      } catch (error) {
-        console.error("SPY chyba:", error);
+    }
+    catch(error) {
+        console.error(
+            "SPY chyba:",
+            error
+        );
 
         latestSpyChange = null;
-        byId("spyValue").textContent = "N/A";
+
+        byId("spyValue").textContent =
+            "N/A";
 
         setStatus(
-          "spyStatus",
-          "ÚDAJE NEDOSTUPNÉ",
-          "neutral"
+            "spyStatus",
+            "ÚDAJE NEDOSTUPNÉ",
+            "neutral"
         );
-      }
-
-      updateCondition();
     }
 
-    function updateCondition() {
-      if (
+    updateCondition();
+}
+
+function updateCondition() {
+    if(
         latestCrypto === null &&
         latestVix === null &&
         latestSpyChange === null
-      ) {
-        byId("conditionValue").textContent = "...";
+    ) {
+        byId("conditionValue").textContent =
+            "...";
 
         setStatus(
-          "conditionStatus",
-          "ČAKÁM NA ÚDAJE",
-          "neutral"
+            "conditionStatus",
+            "ČAKÁM NA ÚDAJE",
+            "neutral"
         );
 
         return;
-      }
+    }
 
-      var score = 50;
+    var score = 50;
 
-      if (latestCrypto !== null) {
-        score += (latestCrypto - 50) * 0.45;
-      }
+    if(latestCrypto !== null) {
+        score +=
+            (latestCrypto - 50) *
+            .45;
+    }
 
-      if (latestVix !== null) {
-        if (latestVix < 15) {
-          score += 15;
-        } else if (latestVix < 20) {
-          score += 8;
-        } else if (latestVix < 30) {
-          score -= 10;
-        } else {
-          score -= 25;
+    if(latestVix !== null) {
+        if(latestVix < 15) {
+            score += 15;
         }
-      }
-
-      if (latestSpyChange !== null) {
-        if (latestSpyChange > 0.30) {
-          score += 10;
-        } else if (latestSpyChange < -0.30) {
-          score -= 10;
+        else if(latestVix < 20) {
+            score += 8;
         }
-      }
+        else if(latestVix < 30) {
+            score -= 10;
+        }
+        else {
+            score -= 25;
+        }
+    }
 
-      score = Math.max(
+    if(latestSpyChange !== null) {
+        if(latestSpyChange > .30) {
+            score += 10;
+        }
+        else if(latestSpyChange < -.30) {
+            score -= 10;
+        }
+    }
+
+    score = Math.max(
         0,
-        Math.min(100, Math.round(score))
-      );
+        Math.min(
+            100,
+            Math.round(score)
+        )
+    );
 
-      var condition;
-      var status;
-      var color;
+    var condition;
+    var status;
+    var color;
 
-      if (score < 25) {
+    if(score < 25) {
         condition = "Fear";
         status = "Risk Off 🔴";
         color = "red";
-      } else if (score < 45) {
+    }
+    else if(score < 45) {
         condition = "Caution";
         status = "Defensive";
         color = "orange";
-      } else if (score < 60) {
+    }
+    else if(score < 60) {
         condition = "Neutral";
         status = "Balanced";
         color = "orange";
-      } else if (score < 80) {
+    }
+    else if(score < 80) {
         condition = "Greed";
         status = "Risk On 🟢";
         color = "green";
-      } else {
+    }
+    else {
         condition = "Extreme Greed";
         status = "Watch Levels";
         color = "red";
-      }
+    }
 
-      byId("conditionValue").textContent = condition;
+    byId("conditionValue").textContent =
+        condition;
 
-      setStatus(
+    setStatus(
         "conditionStatus",
         status,
         color
-      );
+    );
 
-      var meter = byId("meter");
+    var meter =
+        byId("meter");
 
-      meter.style.width = score + "%";
+    meter.style.width =
+        score + "%";
 
-      if (score < 45) {
-        meter.style.background = "#c00000";
-      } else if (score < 60) {
-        meter.style.background = "#c87800";
-      } else if (score < 80) {
-        meter.style.background = "#4caf50";
-      } else {
-        meter.style.background = "#c87800";
-      }
+    if(score < 45) {
+        meter.style.background =
+            "#c00000";
     }
+    else if(score < 60) {
+        meter.style.background =
+            "#c87800";
+    }
+    else if(score < 80) {
+        meter.style.background =
+            "#4caf50";
+    }
+    else {
+        meter.style.background =
+            "#c87800";
+    }
+}
 
-    async function loadAll() {
-      byId("updated").textContent = "Aktualizujem...";
+async function loadAll() {
+    byId("updated").textContent =
+        "Aktualizujem...";
 
-      await Promise.allSettled([
+    await Promise.allSettled([
         loadCryptoFear(),
         loadVix(),
         loadSpy()
-      ]);
+    ]);
 
-      updateCondition();
+    updateCondition();
 
-      byId("updated").textContent =
+    byId("updated").textContent =
         "Aktualizované: " +
         new Date().toLocaleTimeString(
-          "sk-SK",
-          {
-            hour: "2-digit",
-            minute: "2-digit"
-          }
+            "sk-SK",
+            {
+                hour:"2-digit",
+                minute:"2-digit"
+            }
         );
-    }
+}
 
-    loadAll();
+loadAll();
 
-    setInterval(
-      loadAll,
-      300000
-    );
-  </script>
+/*
+ * Automatická aktualizácia každých 5 minút.
+ */
+setInterval(
+    loadAll,
+    5 * 60 * 1000
+);
+</script>
+
 </body>
 </html>
