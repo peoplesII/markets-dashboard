@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="sk">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +7,6 @@
 <title>GAPE Crypto Market</title>
 
 <style>
-
 html, body{
     margin:0;
     padding:0;
@@ -24,13 +22,29 @@ html, body{
     padding:0;
 }
 
+.title-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+}
+
 .title{
     font-size:11px;
     font-weight:bold;
     letter-spacing:.8px;
-    margin-bottom:6px;
     line-height:1.1;
     color:#222;
+    white-space:nowrap;
+}
+
+.updated{
+    font-size:9px;
+    color:#888;
+    line-height:1.1;
+    text-align:right;
+    white-space:nowrap;
 }
 
 .crypto-grid{
@@ -40,16 +54,12 @@ html, body{
 }
 
 .crypto-row{
-
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:8px;
-
     padding:5px 4px;
-
     border-bottom:1px solid rgba(100,100,100,.22);
-
     font-size:11px;
     line-height:1.15;
 }
@@ -89,6 +99,14 @@ html, body{
     white-space:nowrap;
 }
 
+.loading,
+.error{
+    grid-column:1 / -1;
+    padding:5px 4px;
+    font-size:11px;
+    color:#777;
+}
+
 .green{
     color:#008000;
 }
@@ -102,11 +120,6 @@ html, body{
 }
 
 @media(max-width:600px){
-
-    .crypto-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
     .crypto-row{
         font-size:10px;
     }
@@ -128,192 +141,296 @@ html, body{
         font-size:9.5px;
     }
 
+    .updated{
+        font-size:8.5px;
+    }
 }
-
 </style>
-
 </head>
 
 <body>
 
 <div class="crypto-box">
 
-<div class="title">
-🪙 CRYPTO MARKET
-</div>
+    <div class="title-row">
 
-<div id="crypto" class="crypto-grid">
-Načítavam dáta...
-</div>
+        <div class="title">
+            🪙 CRYPTO MARKET
+        </div>
+
+        <div id="updated" class="updated">
+            Načítavam...
+        </div>
+
+    </div>
+
+    <div id="crypto" class="crypto-grid">
+        <div class="loading">
+            Načítavam dáta...
+        </div>
+    </div>
 
 </div>
 
 <script>
+"use strict";
 
-const coins=[
-
-{
-id:"bitcoin",
-name:"Bitcoin",
-symbol:"BTC"
-},
-
-{
-id:"ethereum",
-name:"Ethereum",
-symbol:"ETH"
-},
-
-{
-id:"ripple",
-name:"XRP",
-symbol:"XRP"
-},
-
-{
-id:"solana",
-name:"Solana",
-symbol:"SOL"
-},
-
-{
-id:"binancecoin",
-name:"BNB",
-symbol:"BNB"
-},
-
-{
-id:"cardano",
-name:"Cardano",
-symbol:"ADA"
-},
-
-{
-id:"dogecoin",
-name:"Dogecoin",
-symbol:"DOGE"
-},
-
-{
-id:"avalanche-2",
-name:"Avalanche",
-symbol:"AVAX"
-},
-
-{
-id:"chainlink",
-name:"Chainlink",
-symbol:"LINK"
-},
-
-{
-id:"polkadot",
-name:"Polkadot",
-symbol:"DOT"
-}
-
+const coins = [
+    {
+        id:"bitcoin",
+        name:"Bitcoin",
+        symbol:"BTC"
+    },
+    {
+        id:"ethereum",
+        name:"Ethereum",
+        symbol:"ETH"
+    },
+    {
+        id:"ripple",
+        name:"XRP",
+        symbol:"XRP"
+    },
+    {
+        id:"solana",
+        name:"Solana",
+        symbol:"SOL"
+    },
+    {
+        id:"binancecoin",
+        name:"BNB",
+        symbol:"BNB"
+    },
+    {
+        id:"cardano",
+        name:"Cardano",
+        symbol:"ADA"
+    },
+    {
+        id:"dogecoin",
+        name:"Dogecoin",
+        symbol:"DOGE"
+    },
+    {
+        id:"avalanche-2",
+        name:"Avalanche",
+        symbol:"AVAX"
+    },
+    {
+        id:"chainlink",
+        name:"Chainlink",
+        symbol:"LINK"
+    },
+    {
+        id:"polkadot",
+        name:"Polkadot",
+        symbol:"DOT"
+    }
 ];
 
 async function loadCrypto(){
+    const cryptoElement =
+        document.getElementById("crypto");
 
-    const ids=coins.map(c=>c.id).join(",");
+    const updatedElement =
+        document.getElementById("updated");
 
-    const url=
-    "https://api.coingecko.com/api/v3/simple/price?ids="+
-    ids+
-    "&vs_currencies=usd&include_24hr_change=true";
+    updatedElement.textContent =
+        "Aktualizujem...";
+
+    const ids =
+        coins.map(function(coin){
+            return coin.id;
+        }).join(",");
+
+    const url =
+        "https://api.coingecko.com/api/v3/simple/price" +
+        "?ids=" + encodeURIComponent(ids) +
+        "&vs_currencies=usd" +
+        "&include_24hr_change=true" +
+        "&_=" + Date.now();
 
     try{
-
-        const response=await fetch(url);
-        const data=await response.json();
-
-        let html="";
-
-        coins.forEach(c=>{
-
-            let coin=data[c.id];
-
-            if(!coin) return;
-
-            let price=coin.usd;
-            let change=coin.usd_24h_change;
-
-            let cls="neutral";
-            let arrow="";
-
-            if(change>0){
-                cls="green";
-                arrow="▲";
-            }
-
-            if(change<0){
-                cls="red";
-                arrow="▼";
-            }
-
-            html+=`
-
-<div class="crypto-row">
-
-    <div class="left">
-
-        <span class="name">${c.name}</span>
-
-        <span class="symbol">(${c.symbol})</span>
-
-    </div>
-
-    <div class="price">
-
-        $${formatPrice(price)}
-
-    </div>
-
-    <div class="change ${cls}">
-
-        ${arrow} ${change.toFixed(2)}%
-
-    </div>
-
-</div>
-
-`;
-
+        const response = await fetch(url, {
+            cache:"no-store"
         });
 
-        document.getElementById("crypto").innerHTML=html;
+        if(!response.ok){
+            throw new Error(
+                "CoinGecko HTTP chyba: " +
+                response.status
+            );
+        }
 
+        const data =
+            await response.json();
+
+        let html = "";
+
+        coins.forEach(function(coinInfo){
+            const coin =
+                data[coinInfo.id];
+
+            if(
+                !coin ||
+                !Number.isFinite(Number(coin.usd))
+            ){
+                html += renderMissingCoin(coinInfo);
+                return;
+            }
+
+            const price =
+                Number(coin.usd);
+
+            const change =
+                Number(coin.usd_24h_change);
+
+            let colorClass = "neutral";
+            let arrow = "•";
+            let changeText = "N/A";
+
+            if(Number.isFinite(change)){
+                changeText =
+                    Math.abs(change).toFixed(2) +
+                    "%";
+
+                if(change > 0){
+                    colorClass = "green";
+                    arrow = "▲";
+                }
+                else if(change < 0){
+                    colorClass = "red";
+                    arrow = "▼";
+                }
+            }
+
+            html += `
+                <div class="crypto-row">
+
+                    <div class="left">
+                        <span class="name">
+                            ${coinInfo.name}
+                        </span>
+
+                        <span class="symbol">
+                            (${coinInfo.symbol})
+                        </span>
+                    </div>
+
+                    <div class="price">
+                        $${formatPrice(price)}
+                    </div>
+
+                    <div class="change ${colorClass}">
+                        ${arrow} ${changeText}
+                    </div>
+
+                </div>
+            `;
+        });
+
+        if(!html){
+            throw new Error(
+                "CoinGecko neposlalo žiadne údaje"
+            );
+        }
+
+        cryptoElement.innerHTML = html;
+
+        updatedElement.textContent =
+            "Aktualizované: " +
+            new Date().toLocaleTimeString(
+                "sk-SK",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit"
+                }
+            );
     }
-
     catch(error){
+        console.error(
+            "Crypto widget chyba:",
+            error
+        );
 
-        document.getElementById("crypto").innerHTML="Data momentálne nedostupné";
+        cryptoElement.innerHTML = `
+            <div class="error">
+                Dáta momentálne nie sú dostupné.
+            </div>
+        `;
 
+        updatedElement.textContent =
+            "Dáta nedostupné";
     }
+}
 
+function renderMissingCoin(coin){
+    return `
+        <div class="crypto-row">
+
+            <div class="left">
+                <span class="name">
+                    ${coin.name}
+                </span>
+
+                <span class="symbol">
+                    (${coin.symbol})
+                </span>
+            </div>
+
+            <div class="price neutral">
+                N/A
+            </div>
+
+            <div class="change neutral">
+                N/A
+            </div>
+
+        </div>
+    `;
 }
 
 function formatPrice(value){
-
-    if(value>=1000){
-
-        return value.toLocaleString("en-US",{
-            maximumFractionDigits:2
-        });
-
+    if(!Number.isFinite(value)){
+        return "N/A";
     }
 
-    return value.toFixed(4);
+    if(value >= 1000){
+        return value.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+    }
 
+    if(value >= 1){
+        return value.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:4
+            }
+        );
+    }
+
+    return value.toLocaleString(
+        "en-US",
+        {
+            minimumFractionDigits:4,
+            maximumFractionDigits:6
+        }
+    );
 }
 
 loadCrypto();
 
-setInterval(loadCrypto,60000);
-
+setInterval(
+    loadCrypto,
+    60000
+);
 </script>
 
 </body>
-
 </html>
