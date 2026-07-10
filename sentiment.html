@@ -3,140 +3,653 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>GAPE Market Sentiment</title>
+
   <style>
-    html,body{margin:0;padding:0;background:transparent;font-family:Arial,Helvetica,sans-serif;color:#222}
-    .container{width:100%;max-width:900px;box-sizing:border-box;padding:0}
-    .title{font-size:11px;font-weight:bold;letter-spacing:.8px;margin-bottom:6px;line-height:1.1}
-    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 10px}
-    .card{border-bottom:1px solid rgba(100,100,100,.22);padding:5px 4px}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:8px;line-height:1.15}
-    .label{font-size:11px;color:#777;white-space:nowrap}
-    .value{font-size:12px;font-weight:bold;white-space:nowrap}
-    .status{font-size:10.5px;font-weight:bold;margin-top:3px;text-align:right;line-height:1.1}
-    .green{color:#008000}.red{color:#c00000}.orange{color:#c87800}.neutral{color:#777}
-    .meter-card{margin-top:6px;padding:5px 4px 0;border-bottom:none}
-    .meter-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
-    .meter{height:8px;background:#ddd;border-radius:10px;overflow:hidden}
-    .progress{height:100%;width:50%;background:#c87800;transition:width .3s}
-    .scale{display:flex;justify-content:space-between;font-size:9.5px;margin-top:3px;color:#666;line-height:1.1}
-    @media(max-width:600px){.label{font-size:10px}.value{font-size:11px}.status{font-size:9.5px}.scale{font-size:9px}}
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #222;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      box-sizing: border-box;
+      padding: 0;
+    }
+
+    .title {
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+      line-height: 1.1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 10px;
+    }
+
+    .card {
+      border-bottom: 1px solid rgba(100, 100, 100, 0.22);
+      padding: 5px 4px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      line-height: 1.15;
+    }
+
+    .label {
+      font-size: 11px;
+      color: #777;
+      white-space: nowrap;
+    }
+
+    .value {
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .status {
+      min-height: 12px;
+      margin-top: 3px;
+      font-size: 10.5px;
+      font-weight: bold;
+      line-height: 1.1;
+      text-align: right;
+    }
+
+    .green {
+      color: #008000;
+    }
+
+    .red {
+      color: #c00000;
+    }
+
+    .orange {
+      color: #c87800;
+    }
+
+    .neutral {
+      color: #777;
+    }
+
+    .meter-card {
+      margin-top: 6px;
+      padding: 5px 4px 0;
+    }
+
+    .meter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .meter {
+      height: 8px;
+      overflow: hidden;
+      background: #ddd;
+      border-radius: 10px;
+    }
+
+    .progress {
+      width: 50%;
+      height: 100%;
+      background: #c87800;
+      transition:
+        width 0.4s ease,
+        background 0.4s ease;
+    }
+
+    .scale {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+      color: #666;
+      font-size: 9.5px;
+      line-height: 1.1;
+    }
+
+    .updated {
+      margin-top: 5px;
+      color: #999;
+      font-size: 8px;
+      text-align: right;
+    }
+
+    @media (max-width: 600px) {
+      .label {
+        font-size: 10px;
+      }
+
+      .value {
+        font-size: 11px;
+      }
+
+      .status {
+        font-size: 9.5px;
+      }
+
+      .scale {
+        font-size: 9px;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
+
     <div class="title">📊 MARKET SENTIMENT</div>
+
     <div class="grid">
-      <div class="card"><div class="row"><div class="label">Crypto F&amp;G</div><div id="cryptoValue" class="value">--</div></div><div id="cryptoStatus" class="status neutral">Načítavam...</div></div>
-      <div class="card"><div class="row"><div class="label">VIX</div><div id="vixValue" class="value">--</div></div><div id="vixStatus" class="status neutral">Načítavam...</div></div>
-      <div class="card"><div class="row"><div class="label">SPY Trend</div><div id="spyValue" class="value">--</div></div><div id="spyStatus" class="status neutral">Načítavam...</div></div>
-      <div class="card"><div class="row"><div class="label">Condition</div><div id="conditionValue" class="value">--</div></div><div id="conditionStatus" class="status neutral">Načítavam...</div></div>
+
+      <div class="card">
+        <div class="row">
+          <div class="label">Crypto F&amp;G</div>
+          <div id="cryptoValue" class="value">...</div>
+        </div>
+
+        <div id="cryptoStatus" class="status neutral">
+          Načítavam...
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div class="label">VIX</div>
+          <div id="vixValue" class="value">...</div>
+        </div>
+
+        <div id="vixStatus" class="status neutral">
+          Načítavam...
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div class="label">SPY Trend</div>
+          <div id="spyValue" class="value">...</div>
+        </div>
+
+        <div id="spyStatus" class="status neutral">
+          Načítavam...
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div class="label">Condition</div>
+          <div id="conditionValue" class="value">...</div>
+        </div>
+
+        <div id="conditionStatus" class="status neutral">
+          Načítavam...
+        </div>
+      </div>
+
     </div>
+
     <div class="meter-card">
-      <div class="meter-header"><div class="label">Fear → Greed Meter</div></div>
-      <div class="meter"><div id="meter" class="progress"></div></div>
-      <div class="scale"><span>Extreme Fear</span><span>Neutral</span><span>Extreme Greed</span></div>
+
+      <div class="meter-header">
+        <div class="label">Fear → Greed Meter</div>
+      </div>
+
+      <div class="meter">
+        <div id="meter" class="progress"></div>
+      </div>
+
+      <div class="scale">
+        <span>Extreme Fear</span>
+        <span>Neutral</span>
+        <span>Extreme Greed</span>
+      </div>
+
+      <div id="updated" class="updated"></div>
+
     </div>
+
   </div>
 
   <script>
-    let latestCrypto=null,latestVix=null,latestSpyChange=null;
-    const byId=id=>document.getElementById(id);
-    const proxy=url=>"https://api.allorigins.win/raw?url="+encodeURIComponent(url);
+    "use strict";
 
-    async function getJson(url,useProxy=false){
-      const response=await fetch(useProxy?proxy(url):url,{cache:"no-store"});
-      if(!response.ok)throw new Error("HTTP "+response.status);
-      return response.json();
+    var latestCrypto = null;
+    var latestVix = null;
+    var latestSpyChange = null;
+
+    function byId(id) {
+      return document.getElementById(id);
     }
 
-    async function loadCryptoFear(){
-      try{
-        const data=await getJson("https://api.alternative.me/fng/?limit=1");
-        const value=Number(data?.data?.[0]?.value);
-        if(!Number.isFinite(value))throw new Error("Neplatná Crypto hodnota");
-        latestCrypto=value;
-        byId("cryptoValue").textContent=value;
-        let text,color;
-        if(value<25){text="EXTREME FEAR 🔴";color="red"}
-        else if(value<50){text="FEAR";color="orange"}
-        else if(value<75){text="GREED 🟢";color="green"}
-        else{text="EXTREME GREED 🔥";color="red"}
-        byId("cryptoStatus").textContent=text;
-        byId("cryptoStatus").className="status "+color;
-      }catch(error){
-        console.error("Crypto:",error);
-        byId("cryptoStatus").textContent="Údaje nedostupné";
+    function setStatus(id, text, color) {
+      var element = byId(id);
+
+      element.textContent = text;
+      element.className = "status " + color;
+    }
+
+    function fetchWithTimeout(url, timeout) {
+      var controller = new AbortController();
+
+      var timer = setTimeout(function () {
+        controller.abort();
+      }, timeout);
+
+      return fetch(url, {
+        cache: "no-store",
+        signal: controller.signal
+      }).finally(function () {
+        clearTimeout(timer);
+      });
+    }
+
+    /*
+     * Skúsi priamu URL a potom niekoľko CORS proxy serverov.
+     * Vďaka tomu stránka nezávisí iba od AllOrigins.
+     */
+    async function fetchJsonWithFallback(targetUrl) {
+      var urls = [
+        targetUrl,
+
+        "https://corsproxy.io/?url=" +
+          encodeURIComponent(targetUrl),
+
+        "https://api.allorigins.win/raw?url=" +
+          encodeURIComponent(targetUrl),
+
+        "https://r.jina.ai/http://" +
+          targetUrl.replace(/^https?:\/\//, "")
+      ];
+
+      var errors = [];
+
+      for (var i = 0; i < urls.length; i++) {
+        try {
+          var response = await fetchWithTimeout(urls[i], 10000);
+
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          var text = await response.text();
+
+          /*
+           * Jina proxy pridáva pred JSON textový nadpis.
+           * Odrežeme všetko pred prvou JSON zátvorkou.
+           */
+          if (urls[i].indexOf("r.jina.ai") !== -1) {
+            var marker = text.indexOf("Markdown Content:");
+
+            if (marker !== -1) {
+              text = text.substring(marker + 17).trim();
+            }
+          }
+
+          var firstBrace = text.indexOf("{");
+
+          if (firstBrace > 0) {
+            text = text.substring(firstBrace);
+          }
+
+          return JSON.parse(text);
+        } catch (error) {
+          errors.push(error.message);
+        }
       }
+
+      throw new Error(errors.join(" | "));
     }
 
-    async function fetchYahoo(symbol){
-      const url="https://query1.finance.yahoo.com/v8/finance/chart/"+encodeURIComponent(symbol)+"?range=5d&interval=1d";
-      const data=await getJson(url,true);
-      const quote=data?.chart?.result?.[0]?.indicators?.quote?.[0];
-      if(!quote)throw new Error("Chýbajú údaje pre "+symbol);
-      for(let i=quote.close.length-1;i>=0;i--){
-        const open=Number(quote.open[i]),close=Number(quote.close[i]);
-        if(Number.isFinite(open)&&Number.isFinite(close))return{open,close};
+    async function loadCryptoFear() {
+      try {
+        var url =
+          "https://api.alternative.me/fng/?limit=1&_=" +
+          Date.now();
+
+        var data = await fetchJsonWithFallback(url);
+
+        if (
+          !data ||
+          !data.data ||
+          !data.data[0]
+        ) {
+          throw new Error("Crypto API neposlalo údaje");
+        }
+
+        var value = Number(data.data[0].value);
+
+        if (!Number.isFinite(value)) {
+          throw new Error("Neplatná Crypto hodnota");
+        }
+
+        latestCrypto = value;
+
+        byId("cryptoValue").textContent = value;
+
+        if (value < 25) {
+          setStatus(
+            "cryptoStatus",
+            "EXTREME FEAR 🔴",
+            "red"
+          );
+        } else if (value < 50) {
+          setStatus(
+            "cryptoStatus",
+            "FEAR",
+            "orange"
+          );
+        } else if (value < 75) {
+          setStatus(
+            "cryptoStatus",
+            "GREED 🟢",
+            "green"
+          );
+        } else {
+          setStatus(
+            "cryptoStatus",
+            "EXTREME GREED 🔥",
+            "red"
+          );
+        }
+      } catch (error) {
+        console.error("Crypto chyba:", error);
+
+        latestCrypto = null;
+        byId("cryptoValue").textContent = "N/A";
+
+        setStatus(
+          "cryptoStatus",
+          "ÚDAJE NEDOSTUPNÉ",
+          "neutral"
+        );
       }
-      throw new Error("Chýbajú ceny pre "+symbol);
-    }
 
-    async function loadMarket(){
-      try{
-        const [vix,spy]=await Promise.all([fetchYahoo("^VIX"),fetchYahoo("SPY")]);
-        latestVix=vix.close;
-        byId("vixValue").textContent=latestVix.toFixed(2);
-        let text,color;
-        if(latestVix<15){text="VERY LOW FEAR";color="green"}
-        else if(latestVix<20){text="LOW VOLATILITY";color="green"}
-        else if(latestVix<30){text="ELEVATED RISK";color="orange"}
-        else{text="HIGH FEAR 🔴";color="red"}
-        byId("vixStatus").textContent=text;
-        byId("vixStatus").className="status "+color;
-
-        latestSpyChange=((spy.close-spy.open)/spy.open)*100;
-        color=latestSpyChange>.3?"green":latestSpyChange<-.3?"red":"orange";
-        byId("spyValue").textContent=(latestSpyChange>=0?"▲ ":"▼ ")+latestSpyChange.toFixed(2)+"%";
-        byId("spyValue").className="value "+color;
-        byId("spyStatus").textContent=latestSpyChange>.3?"RISK ON 🟢":latestSpyChange<-.3?"RISK OFF 🔴":"NEUTRAL";
-        byId("spyStatus").className="status "+color;
-      }catch(error){
-        console.error("Market:",error);
-        byId("vixStatus").textContent="Údaje nedostupné";
-        byId("spyStatus").textContent="Údaje nedostupné";
-      }
-    }
-
-    function updateCondition(){
-      if(latestCrypto===null&&latestVix===null&&latestSpyChange===null){
-        byId("conditionStatus").textContent="Údaje nedostupné";
-        return;
-      }
-      let score=50;
-      if(latestCrypto!==null)score+=(latestCrypto-50)*.45;
-      if(latestVix!==null)score+=latestVix<15?15:latestVix<20?8:latestVix<30?-10:-25;
-      if(latestSpyChange!==null)score+=latestSpyChange>.3?10:latestSpyChange<-.3?-10:0;
-      score=Math.max(0,Math.min(100,Math.round(score)));
-      let condition,status,color;
-      if(score<25){condition="Fear";status="Risk Off 🔴";color="red"}
-      else if(score<45){condition="Caution";status="Defensive";color="orange"}
-      else if(score<60){condition="Neutral";status="Balanced";color="orange"}
-      else if(score<80){condition="Greed";status="Risk On 🟢";color="green"}
-      else{condition="Extreme Greed";status="Watch Levels";color="red"}
-      byId("conditionValue").textContent=condition;
-      byId("conditionStatus").textContent=status;
-      byId("conditionStatus").className="status "+color;
-      byId("meter").style.width=score+"%";
-      byId("meter").style.background=score<45?"#c00000":score<60?"#c87800":score<80?"#4caf50":"#c87800";
-    }
-
-    async function loadAll(){
-      await Promise.allSettled([loadCryptoFear(),loadMarket()]);
       updateCondition();
     }
+
+    async function fetchYahoo(symbol) {
+      var url =
+        "https://query1.finance.yahoo.com/v8/finance/chart/" +
+        encodeURIComponent(symbol) +
+        "?range=5d&interval=1d&_=" +
+        Date.now();
+
+      var data = await fetchJsonWithFallback(url);
+
+      if (
+        !data ||
+        !data.chart ||
+        !data.chart.result ||
+        !data.chart.result[0]
+      ) {
+        throw new Error("Yahoo neposlalo údaje pre " + symbol);
+      }
+
+      var result = data.chart.result[0];
+      var quote = result.indicators.quote[0];
+
+      if (!quote || !quote.close) {
+        throw new Error("Chýbajú ceny pre " + symbol);
+      }
+
+      for (var i = quote.close.length - 1; i >= 0; i--) {
+        var open = Number(quote.open[i]);
+        var close = Number(quote.close[i]);
+
+        if (
+          Number.isFinite(open) &&
+          Number.isFinite(close) &&
+          open > 0
+        ) {
+          return {
+            open: open,
+            close: close
+          };
+        }
+      }
+
+      throw new Error("Nenájdená platná cena pre " + symbol);
+    }
+
+    async function loadVix() {
+      try {
+        var vix = await fetchYahoo("^VIX");
+
+        latestVix = vix.close;
+
+        byId("vixValue").textContent =
+          latestVix.toFixed(2);
+
+        if (latestVix < 15) {
+          setStatus(
+            "vixStatus",
+            "VERY LOW FEAR",
+            "green"
+          );
+        } else if (latestVix < 20) {
+          setStatus(
+            "vixStatus",
+            "LOW VOLATILITY",
+            "green"
+          );
+        } else if (latestVix < 30) {
+          setStatus(
+            "vixStatus",
+            "ELEVATED RISK",
+            "orange"
+          );
+        } else {
+          setStatus(
+            "vixStatus",
+            "HIGH FEAR 🔴",
+            "red"
+          );
+        }
+      } catch (error) {
+        console.error("VIX chyba:", error);
+
+        latestVix = null;
+        byId("vixValue").textContent = "N/A";
+
+        setStatus(
+          "vixStatus",
+          "ÚDAJE NEDOSTUPNÉ",
+          "neutral"
+        );
+      }
+
+      updateCondition();
+    }
+
+    async function loadSpy() {
+      try {
+        var spy = await fetchYahoo("SPY");
+
+        latestSpyChange =
+          ((spy.close - spy.open) / spy.open) * 100;
+
+        var color = "orange";
+        var status = "NEUTRAL";
+
+        if (latestSpyChange > 0.30) {
+          color = "green";
+          status = "RISK ON 🟢";
+        } else if (latestSpyChange < -0.30) {
+          color = "red";
+          status = "RISK OFF 🔴";
+        }
+
+        byId("spyValue").textContent =
+          (latestSpyChange >= 0 ? "▲ " : "▼ ") +
+          latestSpyChange.toFixed(2) +
+          "%";
+
+        byId("spyValue").className =
+          "value " + color;
+
+        setStatus(
+          "spyStatus",
+          status,
+          color
+        );
+      } catch (error) {
+        console.error("SPY chyba:", error);
+
+        latestSpyChange = null;
+        byId("spyValue").textContent = "N/A";
+
+        setStatus(
+          "spyStatus",
+          "ÚDAJE NEDOSTUPNÉ",
+          "neutral"
+        );
+      }
+
+      updateCondition();
+    }
+
+    function updateCondition() {
+      if (
+        latestCrypto === null &&
+        latestVix === null &&
+        latestSpyChange === null
+      ) {
+        byId("conditionValue").textContent = "...";
+
+        setStatus(
+          "conditionStatus",
+          "ČAKÁM NA ÚDAJE",
+          "neutral"
+        );
+
+        return;
+      }
+
+      var score = 50;
+
+      if (latestCrypto !== null) {
+        score += (latestCrypto - 50) * 0.45;
+      }
+
+      if (latestVix !== null) {
+        if (latestVix < 15) {
+          score += 15;
+        } else if (latestVix < 20) {
+          score += 8;
+        } else if (latestVix < 30) {
+          score -= 10;
+        } else {
+          score -= 25;
+        }
+      }
+
+      if (latestSpyChange !== null) {
+        if (latestSpyChange > 0.30) {
+          score += 10;
+        } else if (latestSpyChange < -0.30) {
+          score -= 10;
+        }
+      }
+
+      score = Math.max(
+        0,
+        Math.min(100, Math.round(score))
+      );
+
+      var condition;
+      var status;
+      var color;
+
+      if (score < 25) {
+        condition = "Fear";
+        status = "Risk Off 🔴";
+        color = "red";
+      } else if (score < 45) {
+        condition = "Caution";
+        status = "Defensive";
+        color = "orange";
+      } else if (score < 60) {
+        condition = "Neutral";
+        status = "Balanced";
+        color = "orange";
+      } else if (score < 80) {
+        condition = "Greed";
+        status = "Risk On 🟢";
+        color = "green";
+      } else {
+        condition = "Extreme Greed";
+        status = "Watch Levels";
+        color = "red";
+      }
+
+      byId("conditionValue").textContent = condition;
+
+      setStatus(
+        "conditionStatus",
+        status,
+        color
+      );
+
+      var meter = byId("meter");
+
+      meter.style.width = score + "%";
+
+      if (score < 45) {
+        meter.style.background = "#c00000";
+      } else if (score < 60) {
+        meter.style.background = "#c87800";
+      } else if (score < 80) {
+        meter.style.background = "#4caf50";
+      } else {
+        meter.style.background = "#c87800";
+      }
+    }
+
+    async function loadAll() {
+      byId("updated").textContent = "Aktualizujem...";
+
+      await Promise.allSettled([
+        loadCryptoFear(),
+        loadVix(),
+        loadSpy()
+      ]);
+
+      updateCondition();
+
+      byId("updated").textContent =
+        "Aktualizované: " +
+        new Date().toLocaleTimeString(
+          "sk-SK",
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        );
+    }
+
     loadAll();
-    setInterval(loadAll,300000);
+
+    setInterval(
+      loadAll,
+      300000
+    );
   </script>
 </body>
 </html>
