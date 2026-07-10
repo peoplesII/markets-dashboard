@@ -1,116 +1,625 @@
 <!DOCTYPE html>
 <html lang="sk">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>GAPE Live Market Ticker</title>
 
 <style>
-
-html, body {
-
-margin:0;
-padding:0;
-height:55px;
-overflow:hidden;
-background:transparent;
-
+html,
+body {
+    width:100%;
+    height:55px;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background:transparent;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#222;
 }
 
-
-.tradingview-widget-container {
-
-height:55px;
-overflow:hidden;
-
+.ticker {
+    position:relative;
+    width:100%;
+    height:55px;
+    overflow:hidden;
+    background:transparent;
+    border-bottom:1px solid rgba(100,100,100,.16);
+    box-sizing:border-box;
 }
 
-
-.tradingview-widget-container__widget {
-
-height:55px;
-
+.ticker-track {
+    display:flex;
+    align-items:center;
+    width:max-content;
+    height:54px;
+    animation:tickerMove 42s linear infinite;
+    will-change:transform;
 }
 
+.ticker:hover .ticker-track {
+    animation-play-state:paused;
+}
+
+.ticker-group {
+    display:flex;
+    align-items:center;
+    flex-shrink:0;
+}
+
+.ticker-item {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-shrink:0;
+    height:34px;
+    padding:0 18px;
+    border-right:1px solid rgba(100,100,100,.22);
+    box-sizing:border-box;
+}
+
+.market-name {
+    color:#555;
+    font-size:11px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.market-price {
+    color:#222;
+    font-size:12px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.market-change {
+    min-width:58px;
+    font-size:10.5px;
+    font-weight:bold;
+    text-align:right;
+    white-space:nowrap;
+}
+
+.green {
+    color:#008000;
+}
+
+.red {
+    color:#c00000;
+}
+
+.neutral {
+    color:#777;
+}
+
+.loading {
+    display:flex;
+    align-items:center;
+    height:55px;
+    padding:0 14px;
+    color:#777;
+    font-size:11px;
+}
+
+@keyframes tickerMove {
+    from {
+        transform:translateX(0);
+    }
+
+    to {
+        transform:translateX(-50%);
+    }
+}
+
+@media(max-width:600px) {
+    .ticker-item {
+        gap:6px;
+        padding:0 12px;
+    }
+
+    .market-name {
+        font-size:10px;
+    }
+
+    .market-price {
+        font-size:11px;
+    }
+
+    .market-change {
+        min-width:52px;
+        font-size:9.5px;
+    }
+
+    .ticker-track {
+        animation-duration:34s;
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    .ticker-track {
+        animation:none;
+    }
+
+    .ticker {
+        overflow-x:auto;
+    }
+}
 </style>
-
 </head>
-
 
 <body>
 
+<div id="ticker" class="ticker">
 
-<div class="tradingview-widget-container">
-
-<div class="tradingview-widget-container__widget"></div>
-
-
-<script 
-type="text/javascript" 
-src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" 
-async>
-
-{
-"symbols": [
-
-{
-"proName":"FOREXCOM:SPXUSD",
-"title":"S&P 500"
-},
-
-{
-"proName":"NASDAQ:QQQ",
-"title":"NASDAQ 100"
-},
-
-{
-"proName":"AMEX:DIA",
-"title":"Dow Jones"
-},
-
-{
-"proName":"XETR:DAX",
-"title":"DAX"
-},
-
-{
-"proName":"TVC:GOLD",
-"title":"Gold"
-},
-
-{
-"proName":"TVC:USOIL",
-"title":"Oil"
-},
-
-{
-"proName":"BITSTAMP:BTCUSD",
-"title":"Bitcoin"
-}
-
-],
-
-"showSymbolLogo":false,
-
-"colorTheme":"light",
-
-"isTransparent":true,
-
-"displayMode":"adaptive",
-
-"locale":"sk"
-
-}
-
-</script>
-
+    <div class="loading">
+        Načítavam aktuálne trhové údaje...
+    </div>
 
 </div>
 
+<script>
+"use strict";
+
+const markets = [
+    {
+        name:"S&P 500",
+        yahoo:"^GSPC",
+        decimals:2,
+        prefix:""
+    },
+    {
+        name:"NASDAQ 100",
+        yahoo:"QQQ",
+        decimals:2,
+        prefix:"$"
+    },
+    {
+        name:"Dow Jones",
+        yahoo:"DIA",
+        decimals:2,
+        prefix:"$"
+    },
+    {
+        name:"DAX",
+        yahoo:"^GDAXI",
+        decimals:2,
+        prefix:""
+    },
+    {
+        name:"Gold",
+        yahoo:"GC=F",
+        decimals:2,
+        prefix:"$"
+    },
+    {
+        name:"Oil",
+        yahoo:"CL=F",
+        decimals:2,
+        prefix:"$"
+    },
+    {
+        name:"Bitcoin",
+        yahoo:"BTC-USD",
+        decimals:0,
+        prefix:"$"
+    }
+];
+
+/*
+ * Yahoo Finance blokuje priame požiadavky z GitHub Pages.
+ * Preto sa použijú záložné CORS proxy servery.
+ */
+const proxyBuilders = [
+    function(url) {
+        return (
+            "https://corsproxy.io/?url=" +
+            encodeURIComponent(url)
+        );
+    },
+
+    function(url) {
+        return (
+            "https://api.allorigins.win/raw?url=" +
+            encodeURIComponent(url)
+        );
+    },
+
+    function(url) {
+        return (
+            "https://r.jina.ai/http://" +
+            url.replace(/^https?:\/\//, "")
+        );
+    }
+];
+
+function fetchWithTimeout(url, timeout) {
+    const controller =
+        new AbortController();
+
+    const timer =
+        setTimeout(function() {
+            controller.abort();
+        }, timeout);
+
+    return fetch(url, {
+        cache:"no-store",
+        signal:controller.signal
+    }).finally(function() {
+        clearTimeout(timer);
+    });
+}
+
+async function fetchJsonWithFallback(url) {
+    const errors = [];
+
+    for(const buildProxyUrl of proxyBuilders) {
+        try {
+            const proxyUrl =
+                buildProxyUrl(url);
+
+            const response =
+                await fetchWithTimeout(
+                    proxyUrl,
+                    12000
+                );
+
+            if(!response.ok) {
+                throw new Error(
+                    "HTTP " + response.status
+                );
+            }
+
+            let text =
+                await response.text();
+
+            /*
+             * Jina pridáva pred JSON textový nadpis.
+             */
+            if(proxyUrl.includes("r.jina.ai")) {
+                const marker =
+                    text.indexOf(
+                        "Markdown Content:"
+                    );
+
+                if(marker !== -1) {
+                    text = text
+                        .substring(marker + 17)
+                        .trim();
+                }
+            }
+
+            const firstBrace =
+                text.indexOf("{");
+
+            if(firstBrace > 0) {
+                text =
+                    text.substring(firstBrace);
+            }
+
+            const data =
+                JSON.parse(text);
+
+            if(
+                !data ||
+                !data.chart ||
+                !data.chart.result ||
+                !data.chart.result[0]
+            ) {
+                throw new Error(
+                    "Neplatná odpoveď API"
+                );
+            }
+
+            return data;
+        }
+        catch(error) {
+            errors.push(error.message);
+        }
+    }
+
+    throw new Error(
+        errors.join(" | ")
+    );
+}
+
+async function loadMarket(item) {
+    const yahooUrl =
+        "https://query1.finance.yahoo.com/v8/finance/chart/" +
+        encodeURIComponent(item.yahoo) +
+        "?range=5d&interval=1d&_=" +
+        Date.now();
+
+    const data =
+        await fetchJsonWithFallback(
+            yahooUrl
+        );
+
+    const result =
+        data.chart.result[0];
+
+    const meta =
+        result.meta;
+
+    if(
+        !meta ||
+        meta.symbol !== item.yahoo
+    ) {
+        throw new Error(
+            "Neplatné údaje pre " +
+            item.yahoo
+        );
+    }
+
+    let price =
+        Number(meta.regularMarketPrice);
+
+    let previousClose =
+        Number(meta.chartPreviousClose);
+
+    const quote =
+        result.indicators &&
+        result.indicators.quote &&
+        result.indicators.quote[0];
+
+    /*
+     * Záložná aktuálna cena.
+     */
+    if(
+        !Number.isFinite(price) &&
+        quote &&
+        quote.close
+    ) {
+        for(
+            let i = quote.close.length - 1;
+            i >= 0;
+            i--
+        ) {
+            const close =
+                Number(quote.close[i]);
+
+            if(Number.isFinite(close)) {
+                price = close;
+                break;
+            }
+        }
+    }
+
+    /*
+     * Záložná predchádzajúca cena.
+     */
+    if(
+        (
+            !Number.isFinite(previousClose) ||
+            previousClose === 0
+        ) &&
+        quote &&
+        quote.close
+    ) {
+        const validCloses =
+            quote.close
+                .map(Number)
+                .filter(Number.isFinite);
+
+        if(validCloses.length >= 2) {
+            previousClose =
+                validCloses[
+                    validCloses.length - 2
+                ];
+        }
+    }
+
+    if(!Number.isFinite(price)) {
+        throw new Error(
+            "Cena nie je dostupná pre " +
+            item.yahoo
+        );
+    }
+
+    let changePercent = null;
+
+    if(
+        Number.isFinite(previousClose) &&
+        previousClose !== 0
+    ) {
+        changePercent =
+            (
+                (price - previousClose) /
+                previousClose
+            ) * 100;
+    }
+
+    return {
+        name:item.name,
+        yahoo:item.yahoo,
+        decimals:item.decimals,
+        prefix:item.prefix,
+        price:price,
+        changePercent:changePercent
+    };
+}
+
+function renderMarket(item) {
+    let colorClass = "neutral";
+    let arrow = "•";
+    let changeText = "N/A";
+
+    if(
+        Number.isFinite(
+            item.changePercent
+        )
+    ) {
+        changeText =
+            Math.abs(
+                item.changePercent
+            ).toFixed(2) +
+            "%";
+
+        if(item.changePercent > 0) {
+            colorClass = "green";
+            arrow = "▲";
+        }
+        else if(item.changePercent < 0) {
+            colorClass = "red";
+            arrow = "▼";
+        }
+    }
+
+    return `
+        <div class="ticker-item">
+
+            <span class="market-name">
+                ${item.name}
+            </span>
+
+            <span class="market-price">
+                ${formatPrice(item)}
+            </span>
+
+            <span class="market-change ${colorClass}">
+                ${arrow} ${changeText}
+            </span>
+
+        </div>
+    `;
+}
+
+function renderMissingMarket(item) {
+    return `
+        <div class="ticker-item">
+
+            <span class="market-name">
+                ${item.name}
+            </span>
+
+            <span class="market-price neutral">
+                N/A
+            </span>
+
+            <span class="market-change neutral">
+                N/A
+            </span>
+
+        </div>
+    `;
+}
+
+function formatPrice(item) {
+    if(!Number.isFinite(item.price)) {
+        return "N/A";
+    }
+
+    const formatted =
+        item.price.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits:
+                    item.decimals,
+                maximumFractionDigits:
+                    item.decimals
+            }
+        );
+
+    return item.prefix + formatted;
+}
+
+async function loadTicker() {
+    const ticker =
+        document.getElementById(
+            "ticker"
+        );
+
+    try {
+        const results =
+            await Promise.allSettled(
+                markets.map(function(item) {
+                    return loadMarket(item);
+                })
+            );
+
+        const itemsHtml =
+            results.map(
+                function(result, index) {
+                    if(
+                        result.status ===
+                        "fulfilled"
+                    ) {
+                        return renderMarket(
+                            result.value
+                        );
+                    }
+
+                    return renderMissingMarket(
+                        markets[index]
+                    );
+                }
+            ).join("");
+
+        const successfulCount =
+            results.filter(
+                function(result) {
+                    return (
+                        result.status ===
+                        "fulfilled"
+                    );
+                }
+            ).length;
+
+        if(successfulCount === 0) {
+            ticker.innerHTML = `
+                <div class="loading">
+                    Trhové údaje momentálne nie sú dostupné.
+                </div>
+            `;
+
+            return;
+        }
+
+        /*
+         * Skupina sa zobrazí dvakrát,
+         * aby bol pohyb plynulý bez prázdneho miesta.
+         */
+        ticker.innerHTML = `
+            <div class="ticker-track">
+
+                <div class="ticker-group">
+                    ${itemsHtml}
+                </div>
+
+                <div
+                    class="ticker-group"
+                    aria-hidden="true"
+                >
+                    ${itemsHtml}
+                </div>
+
+            </div>
+        `;
+    }
+    catch(error) {
+        console.error(
+            "Ticker chyba:",
+            error
+        );
+
+        ticker.innerHTML = `
+            <div class="loading">
+                Trhové údaje momentálne nie sú dostupné.
+            </div>
+        `;
+    }
+}
+
+loadTicker();
+
+/*
+ * Automatická aktualizácia každých 5 minút.
+ */
+setInterval(
+    loadTicker,
+    5 * 60 * 1000
+);
+</script>
 
 </body>
-
 </html>
